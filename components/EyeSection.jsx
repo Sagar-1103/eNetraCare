@@ -56,7 +56,7 @@ const EyeSection = (props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Eye Section</Text>
+      <Text style={styles.title}>Upload Eye Images</Text>
       <View style={styles.imageButtonContainer}>
         <View style={styles.imageButtonWrapper}>
           {leftImageUri && <Image source={{ uri: leftImageUri }} style={styles.image} />}
