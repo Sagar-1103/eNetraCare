@@ -1,22 +1,24 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Alert, Image } from 'react-native';
 import RNPrint from 'react-native-print';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '../context/SessionProvider';
+import Logo from "../assets/Innovease_Logo.jpg"
 
-const Pdf = ({route,navigation}) => {
-  const {filePath} = route.params;
-  const {setCategory, entries, setEntries } = useSession();
-  const printPdf = async()=>{
-    await RNPrint.print({filePath:filePath});
-  }
+const Pdf = ({ route, navigation }) => {
+  const { filePath, tempName } = route.params;
+  const { setCategory, entries, setEntries } = useSession();
+
+  const printPdf = async () => {
+    await RNPrint.print({ filePath: filePath });
+  };
+
   const downloadPdf = async () => {
     try {
-      const id = uuid.v4().slice(0,2);
-      const name = "info";
-      const destinationPath = `${RNFS.DownloadDirectoryPath}/${name.split(" ")[0]}-${id}.pdf`;
+      const id = uuid.v4().slice(0, 2);
+      const destinationPath = `${RNFS.DownloadDirectoryPath}/${tempName}-${id}.pdf`;
       await RNFS.copyFile(filePath, destinationPath);
       console.log(filePath);
       Alert.alert('Download Successful', `PDF downloaded to downloads folder.`);
@@ -26,20 +28,22 @@ const Pdf = ({route,navigation}) => {
     }
   };
 
-  const handleEntry = async()=>{
-    if (entries<1) {
-        await AsyncStorage.clear();
-        setCategory(null);
-        setEntries(null);
-        navigation.navigate("Home");
-        return;
+  const handleEntry = async () => {
+    if (entries < 1) {
+      await AsyncStorage.clear();
+      setCategory(null);
+      setEntries(null);
+      navigation.navigate("Home");
+      return;
     }
     navigation.navigate("PatientInfo");
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={downloadPdf} >
+      <Image source={Logo} style={styles.logo} />
+      <Text style={styles.headerText}>Patient Document Management</Text>
+      <TouchableOpacity style={styles.button} onPress={downloadPdf}>
         <Text style={styles.buttonText}>Download PDF</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={printPdf}>
@@ -57,10 +61,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5', // Background color
+    backgroundColor: '#e0f7fa', // Light blue background color for a hospital theme
+  },
+  logo: {
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#00796b', // Dark teal color
+    marginBottom: 30,
   },
   button: {
-    backgroundColor: '#4CAF50', // Button background color
+    backgroundColor: '#00796b', // Dark teal color
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
@@ -73,4 +86,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
 export default Pdf;

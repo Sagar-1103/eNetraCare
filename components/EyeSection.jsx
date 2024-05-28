@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button, PermissionsAndroid, Platform, Image } f
 import ImagePicker from 'react-native-image-crop-picker';
 
 const EyeSection = (props) => {
-  const {setLeftUri,setRightUri} = props;
+  const { setLeftUri, setRightUri } = props;
   const [rightImageUri, setRightImageUri] = useState(null);
   const [leftImageUri, setLeftImageUri] = useState(null);
 
@@ -61,12 +61,12 @@ const EyeSection = (props) => {
         <View style={styles.imageButtonWrapper}>
           {leftImageUri && <Image source={{ uri: leftImageUri }} style={styles.image} />}
           {!leftImageUri && <View style={styles.placeholder} />}
-          <Button title="Left Image" onPress={() => upload('left')} color="#4CAF50" />
+          <Button title="Left Image" onPress={() => upload('left')} color="#00796B" />
         </View>
         <View style={styles.imageButtonWrapper}>
           {rightImageUri && <Image source={{ uri: rightImageUri }} style={styles.image} />}
           {!rightImageUri && <View style={styles.placeholder} />}
-          <Button title="Right Image" onPress={() => upload('right')} color="#4CAF50" />
+          <Button title="Right Image" onPress={() => upload('right')} color="#00796B" />
         </View>
       </View>
     </View>
@@ -78,34 +78,42 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#E0F7FA',
     padding: 16,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color: '#333',
+    color: '#004D40',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
   },
   imageButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
   },
   imageButtonWrapper: {
     alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 10,
   },
   image: {
-    height: 150,
-    width: 150,
-    borderRadius: 75,
+    height: 120,
+    width: 120,
+    borderRadius: 60,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: '#004D40',
   },
   placeholder: {
-    height: 150,
-    width: 150,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 75,
+    height: 120,
+    width: 120,
+    backgroundColor: '#B2DFDB',
+    borderRadius: 60,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: '#004D40',
   },
 });
 
