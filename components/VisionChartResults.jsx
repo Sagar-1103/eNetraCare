@@ -80,123 +80,127 @@ const VisionChartResults = ({navigation}) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Eye Camp Form</title>
         <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7; /* Light gray background */
-          }
-          .page {
-            page-break-inside: avoid;
-          }
-          .page-pad {
-            padding-top: 3rem;
-          }
-          .form-container {
-            width: 80%;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #eaf4fc; /* Light blue background */
-            border: 1px solid #b8d9ea; /* Light blue border */
-            border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.6s ease-in-out;
-          }
-          h1,
-          h3 {
-            text-align: center;
-            color: #1f4788; /* Dark blue heading color */
-          }
-          h2 {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #b8d9ea; /* Light blue border */
-            text-align: center;
-            color: #1f4788; /* Dark blue heading color */
-          }
-          img {
-            margin: 0 auto;
-            border-radius: 50%; /* Make the images round */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .flex-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin-top: 10px;
-            width: 100%;
-            align-items: 'center';
-          }
-          .form-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #b8d9ea; /* Light blue border */
-          }
-          .form-group {
-            display: grid;
-            grid-template-columns: 1fr 3fr; /* Adjust the column widths as needed */
-            margin-bottom: 20px;
-          }
-          .form-group label {
-            grid-column: 1 / 2;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #1f4788; /* Dark blue label color */
-            align-self: center; /* Align label vertically centered */
-          }
-          .form-group input[type="text"],
-          .form-group select,
-          .form-group textarea {
-            grid-column: 2 / 3;
-            width: calc(100% - 10px);
-            padding: 5px 0; /* Adjust vertical padding */
-            box-sizing: border-box;
-            border: none; /* Remove border */
-            border-bottom: 1px solid #b8d9ea; /* Light blue underline effect */
-            background: none; /* Remove background */
-            transition: border-color 0.3s ease-in-out;
-            align-self: center; /* Align input vertically centered */
-          }
-          /* Add hover effect on underline */
-          .form-group input[type="text"]:hover,
-          .form-group select:hover,
-          .form-group textarea:hover {
-            border-bottom: 1px solid #1f4788; /* Dark blue color on hover */
-          }
-          /* Add focus effect on underline */
-          .form-group input[type="text"]:focus,
-          .form-group select:focus,
-          .form-group textarea:focus {
-            border-bottom: 2px solid #1f4788; /* Dark blue thickness on focus */
-            outline: none;
-          }
-          .form-group .inline {
-            display: inline-block;
-            margin-right: 10px;
-          }
-          .signature {
-            text-align: right;
-            margin-top: 20px;
-          }
-          .consent {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #777;
-          }
-          .signature span {
-            display: inline-block;
-            margin-left: 10px;
-            border-bottom: 1px solid #1f4788; /* Dark blue signature color */
-            padding-bottom: 3px;
-          }
-          .img-group p {
-            text-align: center;
-            font-weight: bold;
-            color: #1f4788; /* Dark blue image label color */
-          }
-        </style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f7f7; /* Light gray background */
+      }
+      .page {
+        page-break-inside: avoid;
+      }
+      .page-pad {
+        padding-top: 3rem;
+      }
+      .form-container {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #eaf4fc; /* Light blue background */
+        border: 1px solid #b8d9ea; /* Light blue border */
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      h1,
+      h3 {
+        text-align: center;
+        color: #1f4788; /* Dark blue heading color */
+      }
+      h2 {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #b8d9ea; /* Light blue border */
+        text-align: center;
+        color: #1f4788; /* Dark blue heading color */
+      }
+      img {
+        margin: 0 auto;
+        border-radius: 50%; /* Make the images round */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 200px; /* Adjust max-width as needed */
+      }
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 10px 1rem 5px 1rem;
+        width: 100%;
+        align-items: center;
+      }
+      .form-section {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #b8d9ea; /* Light blue border */
+      }
+      .form-group {
+        display: grid;
+        grid-template-columns: 1fr 3fr; /* Adjust the column widths as needed */
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        grid-column: 1 / 2;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #1f4788; /* Dark blue label color */
+        align-self: center; /* Align label vertically centered */
+      }
+      .form-group input[type="text"],
+      .form-group select,
+      .form-group textarea {
+        grid-column: 2 / 3;
+        width: calc(100% - 10px);
+        padding: 5px 0; /* Adjust vertical padding */
+        box-sizing: border-box;
+        border: none; /* Remove border */
+        border-bottom: 1px solid #b8d9ea; /* Light blue underline effect */
+        background: none; /* Remove background */
+        transition: border-color 0.3s ease-in-out;
+        align-self: center; /* Align input vertically centered */
+      }
+      /* Add hover effect on underline */
+      .form-group input[type="text"]:hover,
+      .form-group select:hover,
+      .form-group textarea:hover {
+        border-bottom: 1px solid #1f4788; /* Dark blue color on hover */
+      }
+      /* Add focus effect on underline */
+      .form-group input[type="text"]:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-bottom: 2px solid #1f4788; /* Dark blue thickness on focus */
+        outline: none;
+      }
+      .form-group .inline {
+        display: inline-block;
+        margin-right: 10px;
+      }
+      .signature {
+        text-align: right;
+        margin-top: 20px;
+      }
+      .consent {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+      }
+      .signature span {
+        display: inline-block;
+        margin-left: 10px;
+        border-bottom: 1px solid #1f4788; /* Dark blue signature color */
+        padding-bottom: 3px;
+      }
+      .img-group {
+        margin: 0 10px; /* Add margin to create space between images */
+      }
+      .img-group p {
+        text-align: center;
+        font-weight: bold;
+        color: #1f4788; /* Dark blue image label color */
+      }
+    </style>
       </head>
       <body>
         <div class="form-container">
@@ -350,12 +354,12 @@ const VisionChartResults = ({navigation}) => {
 
               <ul>
               <li>Health conditions like diabetes, kidney disease, glaucoma, smoking, eye
-              injuries, infection, and inflammation inside the eye
+              injuries, infection, and inflammation inside the eye.
              </li>
-              <li>Prolonged use of certain medications can also lead to cataract formation
+              <li>Prolonged use of certain medications can also lead to cataract formation.
              </li>
               <li>Cataract may also occur in children due to genetic or metabolic defect or
-              due to infection and trauma
+              due to infection and trauma.
              </li>
               </ul>
 
@@ -363,25 +367,25 @@ const VisionChartResults = ({navigation}) => {
               symptoms.</p>
 
               <ul>
-              <li>Cloudy vision</li>
-              <li>Colours of objects may appear faded</li>
-              <li>Poor eyesight at night</li>
-              <li>Difficulty in driving at night, especially because of the glare of lights</li>
-              <li>Difficulty in reading in dim light</li>
-              <li>Coloured haloes</li>
-              <li>You may see multiple images or double images</li>
+              <li>Cloudy vision.</li>
+              <li>Colours of objects may appear faded.</li>
+              <li>Poor eyesight at night.</li>
+              <li>Difficulty in driving at night, especially because of the glare of lights.</li>
+              <li>Difficulty in reading in dim light.</li>
+              <li>Coloured haloes.</li>
+              <li>You may see multiple images or double images.</li>
               </ul>
 
               <p>To deal with symptoms of cataracts until you decide to have surgery, try to:</p>
               <ul>
               <li>Make sure your prescription for your eyeglasses or contact lenses is up to date.</li>
-              <li>Improve the lighting in your home with more or brighter lamps</li>
+              <li>Improve the lighting in your home with more or brighter lamps.</li>
               <li>Wear sunglasses or a broad-brimmed hat to reduce glare during the day.</li>
               <li>Limit driving at night.</li>
               </ul>
               <p>Self-care measures may help for a while, but your vision may get worse as
               the cataract grows. When vision loss starts to affect your everyday activities,
-              consider cataract surgery</p>
+              consider cataract surgery.</p>
 
             </div>
           </div>
