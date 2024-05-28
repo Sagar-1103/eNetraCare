@@ -38,8 +38,8 @@ const AppNavigation = () => {
     } else {
         return (
             <Stack.Navigator initialRouteName="VisionChartResults">
-                <Stack.Screen name="VisionChartResults" component={VisionChartResults} />
                 <Stack.Screen name="PatientInfo" component={PatientInfo} />
+                <Stack.Screen name="VisionChartResults" component={VisionChartResults} />
                 <Stack.Screen name="Pdf" component={Pdf} />
             </Stack.Navigator>
         );
