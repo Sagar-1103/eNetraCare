@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Switch,
   ScrollView,
   StyleSheet,
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import {useSession} from '../context/SessionProvider';
+import RadioGroup from 'react-native-radio-buttons-group';
+import { useSession } from '../context/SessionProvider';
 
-const PatientInfo = ({navigation}) => {
+const PatientInfo = ({ navigation }) => {
   const {
-    surgeryEye,
-    setSurgeryEye,
-    cataractSurgery,
     setCataractSurgery,
+    cataractSurgery,
+    setSurgeryEye,
     otherComplaints,
     setOtherComplaints,
     diabetes,
@@ -43,35 +42,42 @@ const PatientInfo = ({navigation}) => {
     setReducedVisionEye,
   } = useSession();
 
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Left Eye',
+        value: 'Left Eye',
+        containerStyle: styles.radioButton,
+        labelStyle: styles.radioLabel,
+      },
+      {
+        id: '2',
+        label: 'Right Eye',
+        value: 'Right Eye',
+        containerStyle: styles.radioButton,
+        labelStyle: styles.radioLabel,
+      },
+      {
+        id: '3',
+        label: 'Both Eyes',
+        value: 'Both Eyes',
+        containerStyle: styles.radioButton,
+        labelStyle: styles.radioLabel,
+      },
+      {
+        id: '4',
+        label: 'None',
+        value: 'No Surgery Done',
+        containerStyle: styles.radioButton,
+        labelStyle: styles.radioLabel,
+      },
+    ],
+    [],
+  );
+
   const handleSubmit = () => {
-    if (!regNo || !name || !age || !gender || !occupation || !mobileNumber || !email || !bloodGroup) {
-      Alert.alert(
-        'Missing Information',
-        'Please fill out all required fields.',
-      );
-      return;
-    }
-    if (!/^\d{10}$/.test(mobileNumber)) {
-      Alert.alert(
-        'Invalid Input',
-        'Please enter a valid 10-digit mobile number.',
-      );
-      return;
-    }
-    if (cataractSurgery && !surgeryEye) {
-      Alert.alert(
-        'Missing Information',
-        'Please specify which eye had the cataract surgery.',
-      );
-      return;
-    }
-    if (reducedVision && !reducedVisionEye) {
-      Alert.alert(
-        'Missing Information',
-        'Please specify which eye has reduced vision.',
-      );
-      return;
-    }
+    setSurgeryEye(radioButtons[cataractSurgery-1].value)
     navigation.navigate('VisionChartResults');
   };
 
@@ -170,10 +176,15 @@ const PatientInfo = ({navigation}) => {
         />
       </View>
 
-      <View style={styles.switchContainer}>
+      <View style={styles.inputContainer}>
         <Text style={styles.label}>Diabetes:</Text>
-        <Switch value={diabetes} onValueChange={setDiabetes} trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={diabetes ? '#f5dd4b' : '#f4f3f4'}/>
+        <TextInput
+          style={styles.input}
+          value={diabetes}
+          onChangeText={setDiabetes}
+          placeholder="Yes or No"
+          placeholderTextColor="#888"
+        />
       </View>
 
       <Text style={styles.heading}>Vision Information</Text>
@@ -187,47 +198,27 @@ const PatientInfo = ({navigation}) => {
           placeholder="Describe any other complaints"
           placeholderTextColor="#888"
           multiline
-          numberOfLines={4}
+          numberOfLines={2}
         />
       </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.label}>Cataract Surgery Done:</Text>
-        <Switch value={cataractSurgery} onValueChange={setCataractSurgery} trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={cataractSurgery ? '#f5dd4b' : '#f4f3f4'}/>
+      <Text style={styles.label}>Cataract Surgery Done:</Text>
+      <View style={styles.radioBox}>
+        <RadioGroup
+          radioButtons={[radioButtons[0], radioButtons[1]]}
+          onPress={setCataractSurgery}
+          selectedId={cataractSurgery}
+          layout="row"
+        />
       </View>
-
-      {cataractSurgery && (
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>If Yes, in which Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={surgeryEye}
-            onChangeText={setSurgeryEye}
-            placeholder="Specify the Eye"
-            placeholderTextColor="#888"
-          />
-        </View>
-      )}
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.label}>Reduced Vision Surgery Done:</Text>
-        <Switch value={reducedVision} onValueChange={setReducedVision} trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={reducedVision ? '#f5dd4b' : '#f4f3f4'}/>
+      <View style={styles.radioBox}>
+        <RadioGroup
+          radioButtons={[radioButtons[2], radioButtons[3]]}
+          onPress={setCataractSurgery}
+          selectedId={cataractSurgery}
+          layout="row"
+        />
       </View>
-
-      {reducedVision && (
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>If Yes, in which Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={reducedVisionEye}
-            onChangeText={setReducedVisionEye}
-            placeholder="Specify the Eye"
-            placeholderTextColor="#888"
-          />
-        </View>
-      )}
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Next</Text>
@@ -278,14 +269,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+    textAlignVertical: 'center',
   },
   button: {
     backgroundColor: '#004d40', // Darker teal for buttons
@@ -294,7 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginVertical: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -305,6 +289,28 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  radioButton: {
+    borderWidth: 1,
+    borderColor: '#b2dfdb',
+    borderRadius: 10,
+    padding: 7,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  radioLabel: {
+    color: '#00796b',
+    fontWeight: '600',
+  },
+  radioBox: {
+    flex: 1,
+    flexDirection: 'row', // Set flex direction to row for horizontal layout
+    justifyContent: 'space-around', // Distribute space around the radio buttons
+    marginVertical: 1, // Add some vertical margin for spacing
   },
 });
 

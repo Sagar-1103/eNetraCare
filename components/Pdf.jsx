@@ -45,9 +45,9 @@ const Pdf = ({ route, navigation }) => {
     setMobileNumber('');
     setEmail('');
     setBloodGroup('');
-    setDiabetes(false);
+    setDiabetes('');
     setOtherComplaints('');
-    setCataractSurgery(false);
+    setCataractSurgery('4');
     setReducedVision(false);
     setReducedVisionEye('');
     setSurgeryEye('');

@@ -15,14 +15,14 @@ const SessionProvider = props => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
-  const [diabetes, setDiabetes] = useState(false);
+  const [diabetes, setDiabetes] = useState('');
   const [reducedVisionRight, setReducedVisionRight] = useState(false);
   const [reducedVisionLeft, setReducedVisionLeft] = useState(false);
   const [reducedVisionBoth, setReducedVisionBoth] = useState(false);
   const [reducedVision, setReducedVision] = useState(false);
   const [reducedVisionEye, setReducedVisionEye] = useState('');
   const [otherComplaints, setOtherComplaints] = useState('');
-  const [cataractSurgery, setCataractSurgery] = useState(false);
+  const [cataractSurgery, setCataractSurgery] = useState('4');
   const [surgeryEye, setSurgeryEye] = useState('');
   return (
     <SessionContext.Provider

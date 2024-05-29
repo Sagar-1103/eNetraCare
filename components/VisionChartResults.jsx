@@ -45,14 +45,10 @@ const VisionChartResults = ({navigation}) => {
   } = useSession();
 
   const handleVisionSubmit = async () => {
-    if (!rightEyeResult || !leftEyeResult || !rightUri || !leftUri) {
-      Alert.alert(
-        'Missing Information',
-        'Please fill out all required fields.',
-      );
+    if (!rightUri || !leftUri) {
+      Alert.alert("Eye Images Not Uploaded");
       return;
     }
-
     const pdfContent = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -190,6 +186,10 @@ const VisionChartResults = ({navigation}) => {
           <h3>Basic Patient Information</h3>
           <div class="form-section">
             <div class="form-group">
+              <label>Reg. No:</label>
+              <input type="text" name="regNo" value="${regNo}" readonly />
+            </div>
+            <div class="form-group">
               <label>Name:</label>
               <input type="text" name="name" value="${name}" readonly />
             </div>
@@ -219,32 +219,11 @@ const VisionChartResults = ({navigation}) => {
             </div>
             <div class="form-group">
               <label>Had Diabetes:</label>
-              <input type="text" value="${diabetes ? 'Yes' : 'No'}" readonly />
+              <input type="text" value="${diabetes}" readonly />
             </div>
           </div>
           <h3>Patient Eye History</h3>
           <div class="form-section">
-            <div class="form-group">
-              <label>Reduced Vision:</label>
-              <input type="text" value="${
-                reducedVision ? 'Yes' : 'No'
-              }" readonly />
-            </div>
-            ${
-              reducedVision
-                ? `
-            <div class="form-group">
-              <label>If Yes, in which eye:</label>
-              <input
-                type="text"
-                name="surgeryEye"
-                value="${reducedVisionEye}"
-                readonly
-              />
-            </div>
-            `
-                : '<span></span>'
-            }
            ${otherComplaints!=="" ? ` <div class="form-group">
               <label>Any Other Complaint:</label>
               <input
@@ -258,13 +237,13 @@ const VisionChartResults = ({navigation}) => {
               <label>Cataract Surgery Done:</label>
               <input
                 type="text"
-                value="${cataractSurgery ? 'Yes' : 'No'}"
+                value="${surgeryEye==='No Surgery Done' ? 'No' : 'Yes'}"
                 readonly
               />
             </div>
     
             ${
-              cataractSurgery
+              surgeryEye!=='No Surgery Done'
                 ? `
             <div class="form-group">
               <label>If Yes, in which eye:</label>
