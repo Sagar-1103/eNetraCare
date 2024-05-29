@@ -45,10 +45,10 @@ const VisionChartResults = ({navigation}) => {
   } = useSession();
 
   const handleVisionSubmit = async () => {
-    if (!rightUri || !leftUri) {
-      Alert.alert("Eye Images Not Uploaded");
-      return;
-    }
+    // if (!rightUri || !leftUri) {
+    //   Alert.alert("Eye Images Not Uploaded");
+    //   return;
+    // }
     const pdfContent = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -413,14 +413,20 @@ const VisionChartResults = ({navigation}) => {
     await AsyncStorage.setItem('entries', JSON.stringify(tempEntries - 1));
     setEntries(tempEntries - 1);
     let pdf = await RNHTMLtoPDF.convert(printOptions);
-    await RNFS.copyFile(
-      leftUri,
-      folderPath + `/${regNo}_${name.split(' ')[0]}-left.jpg`,
-    );
-    await RNFS.copyFile(
-      rightUri,
-      folderPath + `/${regNo}_${name.split(' ')[0]}-right.jpg`,
-    );
+    if (leftUri) {
+      await RNFS.copyFile(
+        leftUri,
+        folderPath + `/${regNo}_${name.split(' ')[0]}-left.jpg`,
+      );
+    }
+
+    if (rightUri) {
+      await RNFS.copyFile(
+        rightUri,
+        folderPath + `/${regNo}_${name.split(' ')[0]}-right.jpg`,
+      );
+    }
+    
     console.log('Pdf Generated', pdf.filePath);
     const tempName = `${regNo}_${entries}`;
     console.log(category, entries);
