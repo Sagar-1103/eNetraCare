@@ -36,7 +36,7 @@ const EyeSection = (props) => {
   };
 
   const upload = (side) => {
-    ImagePicker.openPicker({
+    ImagePicker.openCamera({
       width: 300,
       height: 300,
       cropping: true,
