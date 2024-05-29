@@ -1,15 +1,69 @@
-import React from 'react';
-import {View, StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
+import React,{useEffect} from 'react';
+import {View, StyleSheet, Text, Image, TouchableOpacity,PermissionsAndroid} from 'react-native';
 import Logo from '../assets/Innovease_Logo.jpg';
 
 function HomeScreen({navigation}) {
   const handleCategory = category => {
     navigation.navigate('License', {category: category});
   };
+  useEffect(() => {
+    perm();
+  }, []);
+  const perm = async () => {
+    await requestCameraPermission();
+    await requestStoragePermission();
+  };
+
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'App Camera Permission',
+          message:
+            'This App needs access to your camera ' +
+            'so you can take pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  const requestStoragePermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Storage Permission',
+          message:
+            'App needs access to your storage ' +
+            'so you can save photos and files.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Storage permission granted');
+      } else {
+        console.log('Storage permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={Logo} style={styles.logo}/>
+      <Image source={Logo} style={styles.logo} />
       <Text style={styles.title}>Select a Category</Text>
       <TouchableOpacity
         style={styles.button}

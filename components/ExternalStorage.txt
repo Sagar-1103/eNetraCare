@@ -1,0 +1,607 @@
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Switch,
+  ScrollView,
+  StyleSheet,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
+import EyeSection from './EyeSection';
+import RNFS from 'react-native-fs';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import {useSession} from '../context/SessionProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SnellensChart from '../assets/SnellensChart.jpg';
+
+const VisionChartResults = ({navigation}) => {
+  const [rightEyeResult, setRightEyeResult] = useState('');
+  const [leftEyeResult, setLeftEyeResult] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [leftUri, setLeftUri] = useState(null);
+  const [rightUri, setRightUri] = useState(null);
+  const {
+    surgeryEye,
+    setSurgeryEye,
+    cataractSurgery,
+    setCataractSurgery,
+    otherComplaints,
+    setOtherComplaints,
+    reducedVisionBoth,
+    setReducedVisionBoth,
+    reducedVisionLeft,
+    setReducedVisionLeft,
+    reducedVisionRight,
+    setReducedVisionRight,
+    diabetes,
+    setDiabetes,
+    bloodGroup,
+    setBloodGroup,
+    email,
+    setEmail,
+    category,
+    setCategory,
+    entries,
+    setEntries,
+    regNo,
+    setRegNo,
+    name,
+    setName,
+    age,
+    setAge,
+    gender,
+    setGender,
+    occupation,
+    setOccupation,
+    mobileNumber,
+    setMobileNumber,
+    reducedVisionEye,
+    setReducedVisionEye,
+    reducedVision,
+    setReducedVision,
+  } = useSession();
+
+  const handleVisionSubmit = async () => {
+    if (!rightEyeResult || !leftEyeResult || !rightUri || !leftUri) {
+      Alert.alert(
+        'Missing Information',
+        'Please fill out all required fields.',
+      );
+      return;
+    }
+
+    const pdfContent = `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Eye Camp Form</title>
+        <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f7f7; /* Light gray background */
+      }
+      .page {
+        page-break-inside: avoid;
+      }
+      .page-pad {
+        padding-top: 3rem;
+      }
+      .form-container {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #eaf4fc; /* Light blue background */
+        border: 1px solid #b8d9ea; /* Light blue border */
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      h1,
+      h3 {
+        text-align: center;
+        color: #1f4788; /* Dark blue heading color */
+      }
+      h2 {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #b8d9ea; /* Light blue border */
+        text-align: center;
+        color: #1f4788; /* Dark blue heading color */
+      }
+      img {
+        margin: 0 auto;
+        border-radius: 50%; /* Make the images round */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 200px; /* Adjust max-width as needed */
+      }
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 10px 1rem 5px 1rem;
+        width: 100%;
+        align-items: center;
+      }
+      .form-section {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #b8d9ea; /* Light blue border */
+      }
+      .form-group {
+        display: grid;
+        grid-template-columns: 1fr 3fr; /* Adjust the column widths as needed */
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        grid-column: 1 / 2;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #1f4788; /* Dark blue label color */
+        align-self: center; /* Align label vertically centered */
+      }
+      .form-group input[type="text"],
+      .form-group select,
+      .form-group textarea {
+        grid-column: 2 / 3;
+        width: calc(100% - 10px);
+        padding: 5px 0; /* Adjust vertical padding */
+        box-sizing: border-box;
+        border: none; /* Remove border */
+        border-bottom: 1px solid #b8d9ea; /* Light blue underline effect */
+        background: none; /* Remove background */
+        transition: border-color 0.3s ease-in-out;
+        align-self: center; /* Align input vertically centered */
+      }
+      /* Add hover effect on underline */
+      .form-group input[type="text"]:hover,
+      .form-group select:hover,
+      .form-group textarea:hover {
+        border-bottom: 1px solid #1f4788; /* Dark blue color on hover */
+      }
+      /* Add focus effect on underline */
+      .form-group input[type="text"]:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-bottom: 2px solid #1f4788; /* Dark blue thickness on focus */
+        outline: none;
+      }
+      .form-group .inline {
+        display: inline-block;
+        margin-right: 10px;
+      }
+      .signature {
+        text-align: right;
+        margin-top: 20px;
+      }
+      .consent {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+      }
+      .signature span {
+        display: inline-block;
+        margin-left: 10px;
+        border-bottom: 1px solid #1f4788; /* Dark blue signature color */
+        padding-bottom: 3px;
+      }
+      .img-group {
+        margin: 0 10px; /* Add margin to create space between images */
+      }
+      .img-group p {
+        text-align: center;
+        font-weight: bold;
+        color: #1f4788; /* Dark blue image label color */
+      }
+    </style>
+      </head>
+      <body>
+        <div class="form-container">
+          <div class="page">
+            <h1>Innovease India Private Limited</h1>
+          <h2>Eye Camp</h2>
+          <h3>Basic Patient Information</h3>
+          <div class="form-section">
+            <div class="form-group">
+              <label>Reg. No.:</label>
+              <input type="text" name="regno" value="${regNo}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Name:</label>
+              <input type="text" name="name" value="${name}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Age:</label>
+              <input type="text" name="age" value="${age}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Sex:</label>
+              <input type="text" name="sex" value="${gender}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Occupation:</label>
+              <input type="text" name="occupation" value="${occupation}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Mobile Number:</label>
+              <input type="text" name="mobile" value="${mobileNumber}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Email Id:</label>
+              <input type="text" name="email" value="${email}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Blood Group:</label>
+              <input type="text" name="bloodGrp" value="${bloodGroup}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Had Diabetes:</label>
+              <input type="text" value="${diabetes ? 'Yes' : 'No'}" readonly />
+            </div>
+          </div>
+          <h3>Patient Eye History</h3>
+          <div class="form-section">
+            <div class="form-group">
+              <label>Reduced Vision:</label>
+              <input type="text" value="${
+                reducedVision ? 'Yes' : 'No'
+              }" readonly />
+            </div>
+            ${
+              reducedVision
+                ? `
+            <div class="form-group">
+              <label>If Yes, in which eye:</label>
+              <input
+                type="text"
+                name="surgeryEye"
+                value="${reducedVisionEye}"
+                readonly
+              />
+            </div>
+            `
+                : '<span></span>'
+            }
+           ${otherComplaints!=="" ? ` <div class="form-group">
+              <label>Any Other Complaint:</label>
+              <input
+                type="text"
+                name="other_complaint"
+                value="${otherComplaints}"
+                readonly
+              />
+            </div>`:`<span></span>`}
+            <div class="form-group">
+              <label>Cataract Surgery Done:</label>
+              <input
+                type="text"
+                value="${cataractSurgery ? 'Yes' : 'No'}"
+                readonly
+              />
+            </div>
+    
+            ${
+              cataractSurgery
+                ? `
+            <div class="form-group">
+              <label>If Yes, in which eye:</label>
+              <input type="text" name="surgeryEye" value="${surgeryEye}" readonly />
+            </div>
+            `
+                : '<span></span>'
+            }
+          </div>
+          </div>
+    
+          <div class="page page-pad">
+            <h3>Vision Chart Results</h3>
+            <div class="form-section">
+              <div class="form-group">
+                <label>Right Eye Score:</label>
+                <input
+                  type="text"
+                  name="rightEye"
+                  value="${rightEyeResult}"
+                  readonly
+                />
+              </div>
+              <div class="form-group">
+                <label>Left Eye Score:</label>
+                <input type="text" name="leftEye" value="${leftEyeResult}" readonly />
+              </div>
+            </div>
+      
+            <h3 class="page-pad">Eye Images</h3>
+            <div class="form-section">
+              <div class="flex-row">
+                <div class="img-group">
+                  <img src="${leftUri}" alt="Left Eye" />
+                  <p>Left Eye</p>
+                </div>
+                <div class="img-group">
+                  <img src="${rightUri}" alt="Right Eye" />
+                  <p>Right Eye</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          
+          
+          <div class="page page-pad">
+            <h3>General Information on Cataract</h3>
+            <div class="form-section">
+              <p> As you age, the lenses in your eyes become less flexible, less clear, and
+              thicker. Aging and some medical conditions can cause proteins and fibres
+              within the lenses to break down and clump together. This is what causes the
+              clouding in the lenses.</p>
+
+            <p> As the cataract grows, the clouding becomes worse. A cataract scatters and
+            blocks the light as it passes through the lens. This prevents a sharply defined
+            image from reaching your retina. As a result, your vision becomes blurred.
+            Cataracts usually happen in both eyes, but not always at the same rate. The
+            cataract in one eye may be worse than the other. This causes a difference in
+            vision between eyes.</p>
+            <p> The most common cause of cataract is degenerative changes due to the
+            ageing process. With age, proteins in the natural lens degenerate, resulting in
+            a clouded lens called a cataract. There might be other causes such as:
+           </p>
+
+              <ul>
+              <li>Health conditions like diabetes, kidney disease, glaucoma, smoking, eye
+              injuries, infection, and inflammation inside the eye.
+             </li>
+              <li>Prolonged use of certain medications can also lead to cataract formation.
+             </li>
+              <li>Cataract may also occur in children due to genetic or metabolic defect or
+              due to infection and trauma.
+             </li>
+              </ul>
+
+              <p>If you have cataract, you may experience some or all of the following
+              symptoms.</p>
+
+              <ul>
+              <li>Cloudy vision.</li>
+              <li>Colours of objects may appear faded.</li>
+              <li>Poor eyesight at night.</li>
+              <li>Difficulty in driving at night, especially because of the glare of lights.</li>
+              <li>Difficulty in reading in dim light.</li>
+              <li>Coloured haloes.</li>
+              <li>You may see multiple images or double images.</li>
+              </ul>
+
+              <p>To deal with symptoms of cataracts until you decide to have surgery, try to:</p>
+              <ul>
+              <li>Make sure your prescription for your eyeglasses or contact lenses is up to date.</li>
+              <li>Improve the lighting in your home with more or brighter lamps.</li>
+              <li>Wear sunglasses or a broad-brimmed hat to reduce glare during the day.</li>
+              <li>Limit driving at night.</li>
+              </ul>
+              <p>Self-care measures may help for a while, but your vision may get worse as
+              the cataract grows. When vision loss starts to affect your everyday activities,
+              consider cataract surgery.</p>
+
+            </div>
+          </div>
+
+
+
+          <div class="page page-pad">
+            <h3>Preparing for your appointment</h3>
+            <div class="form-section">
+              <p> Make an appointment with your eye care professional if you notice changes
+              in your vision. If they determine that you have cataracts, then you may be
+              referred to an eye specialist who can perform cataract surgery.</p>
+    
+              <p> If you need cataract surgery in both eyes, your doctor will schedule surgery to
+              remove the cataract Cataract surgery involves removing the clouded lens and
+              replacing it with a clear artificial lens.</p>
+
+              <p>The artificial lens, called an intraocular lens, is put in the same place as your
+ natural lens. It remains a permanent part of your eye.</p>
+
+              <p>Prevention</p>
+
+              <p>No studies have proved how to prevent or slow the growth of cataracts. But
+              health care professionals think several strategies may be helpful, including:</p>
+
+              <ul>
+              <li> Regular eye exams.</li>
+              <li> Do not smoke.</li>
+              <li> Manage other health problems.</li>
+              <li> Choose a healthy diet that includes plenty of fruits and vegetables.</li>
+              </ul>
+
+            </div>
+          </div>
+          
+    
+          
+        </div>
+      </body>
+    </html>
+    `;
+
+    const folderPath =
+      RNFS.ExternalStorageDirectoryPath + '/Enetracare/' + regNo + '_' + entries;
+      console.log(RNFS.ExternalStorageDirectoryPath);
+    try {
+      await RNFS.mkdir(folderPath, {NSURLIsExcludedFromBackupKey: true}); // Create the directory
+      console.log('Directory created successfully:', folderPath);
+    } catch (error) {
+      console.error('Error creating directory:', error);
+    }
+
+    const printOptions = {
+      html: pdfContent, // You can provide HTML content directly if needed
+      fileName: `${regNo}_${name.split(' ')[0]}-Report`,
+      directory: `/../Enetracare/${regNo}_${entries}`,
+    };
+    if (entries < 1) {
+      Alert.alert('Session Expired');
+      await AsyncStorage.clear();
+      setCategory(null);
+      setEntries(null);
+      navigation.navigate('Home');
+      return;
+    }
+    const tempEntries = entries;
+    await AsyncStorage.setItem('entries', JSON.stringify(tempEntries - 1));
+    setEntries(tempEntries - 1);
+    let pdf = await RNHTMLtoPDF.convert(printOptions);
+    await RNFS.copyFile(
+      leftUri,
+      folderPath + `/${regNo}_${name.split(' ')[0]}-left.jpg`,
+    );
+    await RNFS.copyFile(
+      rightUri,
+      folderPath + `/${regNo}_${name.split(' ')[0]}-right.jpg`,
+    );
+    await RNFS.copyFile(
+      pdf.filePath,
+      folderPath + `/${regNo}_${name.split(' ')[0]}-Report.pdf`,
+    );
+    console.log('Pdf Generated', pdf.filePath);
+    const tempName = `${regNo}_${entries}`;
+    console.log(RNFS.ExternalStorageDirectoryPath + '/Enetracare/' + regNo + '_' + entries+regNo+"_"+name.split(' ')[0]+"-Report");
+    navigation.navigate('Pdf', {filePath: folderPath + `/${regNo}_${name.split(' ')[0]}-Report.pdf`, tempName: tempName});
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionHeading}>Vision Chart Results</Text>
+        <View style={styles.inputContainer}>
+          <Image source={SnellensChart} style={styles.image} />
+          <Text style={styles.label}>Right Eye:</Text>
+          <TextInput
+            style={styles.input}
+            value={rightEyeResult}
+            onChangeText={setRightEyeResult}
+            placeholder="Enter right eye result"
+            placeholderTextColor="#999"
+            keyboardType="number-pad"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Left Eye:</Text>
+          <TextInput
+            style={styles.input}
+            value={leftEyeResult}
+            onChangeText={setLeftEyeResult}
+            placeholder="Enter left eye result"
+            placeholderTextColor="#999"
+            keyboardType="number-pad"
+          />
+        </View>
+
+        <EyeSection setLeftUri={setLeftUri} setRightUri={setRightUri} />
+
+        <View style={styles.consentContainer}>
+          <Text style={styles.label}>
+            Consent for taking eye details and images:
+          </Text>
+          <Switch
+            value={consent}
+            onValueChange={setConsent}
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={consent ? '#f5dd4b' : '#f4f3f4'}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.button, !consent && {backgroundColor: '#ccc'}]}
+          disabled={!consent}
+          onPress={handleVisionSubmit}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#e6f2ff',
+  },
+  sectionContainer: {
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  sectionHeading: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#1f4b70',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    marginBottom: 15,
+  },
+  label: {
+    marginBottom: 5,
+    color: '#1f4b70',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+    fontSize: 16,
+    color: '#333',
+  },
+  consentContainer: {
+    paddingHorizontal: 10, // so that the switch wass going out of the box
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  button: {
+    backgroundColor: '#1e90ff',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 15,
+  },
+});
+
+export default VisionChartResults;
