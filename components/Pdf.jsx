@@ -9,7 +9,7 @@ import Logo from "../assets/Innovease_Logo.jpg"
 
 const Pdf = ({ route, navigation }) => {
   const { filePath, tempName } = route.params;
-  const { setCategory, entries, setEntries } = useSession();
+  const {surgeryEye, setSurgeryEye,reducedVisionEye, setReducedVisionEye,reducedVision, setReducedVision,cataractSurgery, setCataractSurgery,otherComplaints, setOtherComplaints,reducedVisionBoth, setReducedVisionBoth,reducedVisionLeft, setReducedVisionLeft,reducedVisionRight, setReducedVisionRight,diabetes, setDiabetes,bloodGroup, setBloodGroup,email, setEmail,category, setCategory, entries, setEntries,regNo, setRegNo,name, setName,age, setAge,gender, setGender,occupation, setOccupation,mobileNumber, setMobileNumber } = useSession();
 
   const printPdf = async () => {
     await RNPrint.print({ filePath: filePath });
@@ -37,6 +37,20 @@ const Pdf = ({ route, navigation }) => {
       return;
     }
     navigation.navigate("PatientInfo");
+    setRegNo('');
+    setName('');
+    setAge('');
+    setGender('');
+    setOccupation('');
+    setMobileNumber('');
+    setEmail('');
+    setBloodGroup('');
+    setDiabetes(false);
+    setOtherComplaints('');
+    setCataractSurgery(false);
+    setReducedVision(false);
+    setReducedVisionEye('');
+    setSurgeryEye('');
   };
 
   return (
