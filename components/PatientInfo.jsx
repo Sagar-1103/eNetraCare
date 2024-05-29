@@ -19,12 +19,6 @@ const PatientInfo = ({navigation}) => {
     setCataractSurgery,
     otherComplaints,
     setOtherComplaints,
-    reducedVisionBoth,
-    setReducedVisionBoth,
-    reducedVisionLeft,
-    setReducedVisionLeft,
-    reducedVisionRight,
-    setReducedVisionRight,
     diabetes,
     setDiabetes,
     bloodGroup,
@@ -49,33 +43,18 @@ const PatientInfo = ({navigation}) => {
     setReducedVisionEye,
   } = useSession();
 
-  const handleReducedVisionSwitch = (value, eye) => {
-    if (eye === 'right') {
-      setReducedVisionRight(value);
-      if (value && reducedVisionLeft) {
-        setReducedVisionBoth(true);
-      } else {
-        setReducedVisionBoth(false);
-      }
-    } else if (eye === 'left') {
-      setReducedVisionLeft(value);
-      if (value && reducedVisionRight) {
-        setReducedVisionBoth(true);
-      } else {
-        setReducedVisionBoth(false);
-      }
-    } else {
-      setReducedVisionBoth(value);
-      setReducedVisionRight(value);
-      setReducedVisionLeft(value);
-    }
-  };
-
   const handleSubmit = () => {
     if (!regNo || !name || !age || !gender || !occupation || !mobileNumber || !email || !bloodGroup) {
       Alert.alert(
         'Missing Information',
         'Please fill out all required fields.',
+      );
+      return;
+    }
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      Alert.alert(
+        'Invalid Input',
+        'Please enter a valid 10-digit mobile number.',
       );
       return;
     }
@@ -95,12 +74,6 @@ const PatientInfo = ({navigation}) => {
     }
     navigation.navigate('VisionChartResults');
   };
-
-  const options = [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-    { label: 'Option 3', value: 'option3' },
-  ];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -204,30 +177,6 @@ const PatientInfo = ({navigation}) => {
       </View>
 
       <Text style={styles.heading}>Vision Information</Text>
-
-      {/* <View style={styles.switchContainer}>
-        <Text style={styles.label}>Reduced Vision in Right Eye:</Text>
-        <Switch
-          value={reducedVisionRight}
-          onValueChange={value => handleReducedVisionSwitch(value, 'right')}
-        />
-      </View>
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.label}>Reduced Vision in Left Eye:</Text>
-        <Switch
-          value={reducedVisionLeft}
-          onValueChange={value => handleReducedVisionSwitch(value, 'left')}
-        />
-      </View>
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.label}>Reduced Vision in Both Eyes:</Text>
-        <Switch
-          value={reducedVisionBoth}
-          onValueChange={value => handleReducedVisionSwitch(value, 'both')}
-        />
-      </View> */}
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Other Complaints:</Text>

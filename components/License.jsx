@@ -4,7 +4,7 @@ import { useSession } from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function License({ navigation, route }) {
-  const { category, setCategory, entries, setEntries } = useSession();
+  const {setCategory, setEntries } = useSession();
   const [licenseNumber, setLicenseNumber] = useState(null);
   const [userLicenseNumber, setUserLicenseNumber] = useState('');
   const licenseNumbers = ['1234', '2345', '3456', '4567'];
