@@ -15,7 +15,7 @@ import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import {useSession} from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SnellensChart from '../assets/SnellensChart.jpg';
+import SnellensChart from '../assets/SnellensChart.png';
 
 const VisionChartResults = ({navigation}) => {
   const [rightEyeResult, setRightEyeResult] = useState('');
@@ -438,7 +438,11 @@ const VisionChartResults = ({navigation}) => {
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionHeading}>Vision Chart Results</Text>
         <View style={styles.inputContainer}>
+          <View style={styles.imageContainer}>
+
           <Image source={SnellensChart} style={styles.image} />
+          </View>
+
           <Text style={styles.label}>Right Eye:</Text>
           <TextInput
             style={styles.input}
@@ -446,8 +450,7 @@ const VisionChartResults = ({navigation}) => {
             onChangeText={setRightEyeResult}
             placeholder="Enter right eye result"
             placeholderTextColor="#999"
-            keyboardType="number-pad"
-          />
+            />
         </View>
 
         <View style={styles.inputContainer}>
@@ -458,7 +461,6 @@ const VisionChartResults = ({navigation}) => {
             onChangeText={setLeftEyeResult}
             placeholder="Enter left eye result"
             placeholderTextColor="#999"
-            keyboardType="number-pad"
           />
         </View>
 
@@ -558,6 +560,11 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginBottom: 15,
   },
+  imageContainer:{
+    borderStyle:"solid",
+    borderWidth:2,
+    marginVertical:16
+  }
 });
 
 export default VisionChartResults;
