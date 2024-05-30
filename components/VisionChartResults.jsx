@@ -218,7 +218,7 @@ const VisionChartResults = ({navigation}) => {
               <input type="text" name="bloodGrp" value="${bloodGroup}" readonly />
             </div>
             <div class="form-group">
-              <label>Had Diabetes:</label>
+              <label>Diabetes:</label>
               <input type="text" value="${diabetes}" readonly />
             </div>
           </div>
