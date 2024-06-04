@@ -112,13 +112,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: 'white',
+    marginTop:-50
   },
   container1: {
     marginTop: 250,
     alignItems: 'center',
   },
   container2: {
-    paddingTop: 40,
+    paddingTop: 30,
     alignItems: 'center',
     backgroundColor: 'powderblue',
     height: 600,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   container3: {
     flex: 1,
     flexWrap: 'wrap',
-    maxHeight: 400,
+    maxHeight: 600,
   },
   logo: {
     width: '100%',
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     color: '#134687',
   },
   button: {
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 23,
     borderRadius: 25,
     margin: 10,
-    width: '40%',
+    minWidth: 140,
     alignItems: 'center',
   },
   buttonPressed: {

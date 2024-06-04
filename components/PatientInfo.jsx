@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useState} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Button,
 } from 'react-native';
-import RadioGroup from 'react-native-radio-buttons-group';
 import {useSession} from '../context/SessionProvider';
 import Navbar from './Navbar';
 import LinearGradient from 'react-native-linear-gradient';
@@ -47,7 +45,7 @@ const PatientInfo = ({navigation}) => {
   const [tempRhFactor,setTempRhFactor] = useState('');
 
   const radioButtons = [
-      {id: '1',label: 'Left Eye',value: 'Left Eye',},
+      {id: '1',label: ' Left Eye',value: 'Left Eye',},
       {id: '2',label: 'Right Eye',value: 'Right Eye',},
       {id: '3',label: 'Both Eyes',value: 'Both Eyes',},
       {id: '4',label: 'None',value: 'No Surgery Done',},
@@ -238,7 +236,7 @@ const PatientInfo = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingTop: 110,
     paddingBottom: 20,
     flexGrow: 1,
   },
@@ -246,7 +244,7 @@ const styles = StyleSheet.create({
     width: 270,
     height: 270,
     position: 'absolute',
-    right: 75,
+    right: 47,
     top: 30,
   },
   heading: {
@@ -276,7 +274,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#b2dfdb',
+    borderColor: '#CBCED5',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -322,7 +320,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    width: '28%',
+    minWidth:90
  },
  cataractBtnText:{
   color:"#134687",
@@ -334,12 +332,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 15,
     backgroundColor: '#134687',
-    width: '28%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+    minWidth:90
+
  },
  cataractBtnTextPressed:{
   color:"#ffffff",
