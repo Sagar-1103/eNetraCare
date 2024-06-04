@@ -15,11 +15,12 @@ import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import {useSession} from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SnellensChart from '../assets/SnellensChart.png';
 
 const VisionChartResults = ({navigation}) => {
-  const [rightEyeResult, setRightEyeResult] = useState('');
-  const [leftEyeResult, setLeftEyeResult] = useState('');
+  const [distantRightEyeResult, setDistantRightEyeResult] = useState('');
+  const [distantleftEyeResult, setDistantLeftEyeResult] = useState('');
+  const [nearRightEyeResult, setNearRightEyeResult] = useState('');
+  const [nearleftEyeResult, setNearLeftEyeResult] = useState('');
   const [consent, setConsent] = useState(false);
   const [leftUri, setLeftUri] = useState(null);
   const [rightUri, setRightUri] = useState(null);
@@ -83,6 +84,9 @@ const VisionChartResults = ({navigation}) => {
       h3 {
         text-align: center;
         color: #1f4788; /* Dark blue heading color */
+      }
+      h4 {
+        color: #1f4788;
       }
       h2 {
         margin-bottom: 20px;
@@ -257,21 +261,40 @@ const VisionChartResults = ({navigation}) => {
     
           <div class="page page-pad">
             <h3>Vision Chart Results</h3>
+            <h4>Distant Vision:</h4>
             <div class="form-section">
               <div class="form-group">
-                <label>Right Eye Score:</label>
+                <label>&ensp; &ensp; Right Eye Score:</label>
                 <input
                   type="text"
                   name="rightEye"
-                  value="${rightEyeResult}"
+                  value="${distantRightEyeResult}"
                   readonly
                 />
               </div>
               <div class="form-group">
-                <label>Left Eye Score:</label>
-                <input type="text" name="leftEye" value="${leftEyeResult}" readonly />
+                <label> &ensp; &ensp; Left Eye Score:</label>
+                <input type="text" name="leftEye" value="${distantleftEyeResult}" readonly />
               </div>
+
+              <h4>Near Vision:</h4>
+              <div class="form-group">
+                <label>&ensp; &ensp; Right Eye Score:</label>
+                <input
+                  type="text"
+                  name="rightEye"
+                  value="${nearRightEyeResult}"
+                  readonly
+                />
+              </div>
+              <div class="form-group">
+                <label> &ensp; &ensp; Left Eye Score:</label>
+                <input type="text" name="leftEye" value="${nearleftEyeResult}" readonly />
+              </div>
+
             </div>
+            
+            
       
             <h3 class="page-pad">Eye Images</h3>
             <div class="form-section">
@@ -438,16 +461,12 @@ const VisionChartResults = ({navigation}) => {
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionHeading}>Vision Chart Results</Text>
         <View style={styles.inputContainer}>
-          <View style={styles.imageContainer}>
-
-          <Image source={SnellensChart} style={styles.image} />
-          </View>
-
+          <Text style={styles.label}>Distant Vision:</Text>
           <Text style={styles.label}>Right Eye:</Text>
           <TextInput
             style={styles.input}
-            value={rightEyeResult}
-            onChangeText={setRightEyeResult}
+            value={distantRightEyeResult}
+            onChangeText={setDistantRightEyeResult}
             placeholder="Enter right eye result"
             placeholderTextColor="#999"
             />
@@ -457,8 +476,31 @@ const VisionChartResults = ({navigation}) => {
           <Text style={styles.label}>Left Eye:</Text>
           <TextInput
             style={styles.input}
-            value={leftEyeResult}
-            onChangeText={setLeftEyeResult}
+            value={distantleftEyeResult}
+            onChangeText={setDistantLeftEyeResult}
+            placeholder="Enter left eye result"
+            placeholderTextColor="#999"
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Near Vision:</Text>
+          <Text style={styles.label}>Right Eye:</Text>
+          <TextInput
+            style={styles.input}
+            value={nearRightEyeResult}
+            onChangeText={setNearRightEyeResult}
+            placeholder="Enter right eye result"
+            placeholderTextColor="#999"
+            />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Left Eye:</Text>
+          <TextInput
+            style={styles.input}
+            value={nearleftEyeResult}
+            onChangeText={setNearLeftEyeResult}
             placeholder="Enter left eye result"
             placeholderTextColor="#999"
           />

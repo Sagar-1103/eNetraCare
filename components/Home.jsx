@@ -1,14 +1,31 @@
-import React,{useEffect} from 'react';
-import {View, StyleSheet, Text, Image, TouchableOpacity,PermissionsAndroid} from 'react-native';
-import Logo from '../assets/Innovease_Logo.jpg';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
+import Eye from '../assets/homeEye.jpg';
+import LinearGradient from 'react-native-linear-gradient';
 
-function HomeScreen({navigation}) {
+function HomeScreen({ navigation }) {
+
+  const categoryArray = [
+    {id:1,entries:" (50 entries) "},
+    {id:3,entries:"(500 entries) "},
+    {id:2,entries:"(100 entries) "},
+    {id:4,entries:"(1000 entries)"},
+  ]
+
+  const [clickedButton,setClickedButton] = useState(null);
+
   const handleCategory = category => {
-    navigation.navigate('License', {category: category});
+    setClickedButton(category);
+    setTimeout(() => {
+      navigation.navigate('License', { category });
+      setClickedButton(null);
+    }, 100);
   };
+
   useEffect(() => {
     perm();
   }, []);
+
   const perm = async () => {
     await requestCameraPermission();
     await requestStoragePermission();
@@ -37,6 +54,7 @@ function HomeScreen({navigation}) {
       console.warn(err);
     }
   };
+
   const requestStoragePermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -63,36 +81,28 @@ function HomeScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Image source={Logo} style={styles.logo} />
-      <Text style={styles.title}>Select a Category</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleCategory(1)}
-        activeOpacity={0.7} // Adds the click effect
-      >
-        <Text style={styles.buttonText}>Category 1 (50 entries)</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleCategory(2)}
-        activeOpacity={0.7} // Adds the click effect
-      >
-        <Text style={styles.buttonText}>Category 2 (100 entries)</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleCategory(3)}
-        activeOpacity={0.7} // Adds the click effect
-      >
-        <Text style={styles.buttonText}>Category 3 (500 entries)</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleCategory(4)}
-        activeOpacity={0.7} // Adds the click effect
-      >
-        <Text style={styles.buttonText}>Category 4 (1000 entries)</Text>
-      </TouchableOpacity>
+      <View style={styles.container1}>
+        <Image source={Eye} style={styles.logo} />
+      </View>
+      <LinearGradient colors={['#D5E8F0', '#A1CDDE', '#3EA6D6']} style={styles.container2}>
+        <Text style={styles.title}>Select a Category</Text>
+        <View style={styles.container3}>
+          {categoryArray.map(category => (
+            <TouchableOpacity
+              key={category.id}
+              style={clickedButton===category.id?styles.buttonPressed:styles.button}
+              onPress={() => handleCategory(category.id)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.buttonText}>Category</Text>
+              <TouchableOpacity disabled style={clickedButton===category.id?styles.numberPressed:styles.number}>
+                <Text style={clickedButton===category.id?styles.numberTextPressed:styles.numberText}>{category.id}</Text>
+              </TouchableOpacity>
+              <Text style={styles.entriesText}>{category.entries}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </LinearGradient>
     </View>
   );
 }
@@ -101,35 +111,89 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  container1: {
+    marginTop: 250,
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
+  },
+  container2: {
+    paddingTop: 40,
+    alignItems: 'center',
+    backgroundColor: 'powderblue',
+    height: 600,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+  container3: {
+    flex: 1,
+    flexWrap: 'wrap',
+    maxHeight: 400,
   },
   logo: {
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: '#dcdcdc',
-    backgroundColor: '#e0f7fa',
+    width: '100%',
+    objectFit: 'contain',
+    marginBottom: -10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#134687',
   },
   button: {
-    backgroundColor: '#4f83cc', // Slightly darker blue color for a hospital feel
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 20,
+    paddingHorizontal: 23,
     borderRadius: 25,
-    marginVertical: 10,
-    width: '80%',
+    margin: 10,
+    width: '40%',
+    alignItems: 'center',
+  },
+  buttonPressed: {
+    backgroundColor: '#84BED4',
+    paddingVertical: 20,
+    paddingHorizontal: 23,
+    borderRadius: 25,
+    margin: 10,
+    width: '40%',
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#134687',
+    fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  number: {
+    borderRadius: 100,
+    backgroundColor: '#84BED4',
+    marginVertical: 5,
+    paddingHorizontal: 25,
+  },
+  numberPressed: {
+    borderRadius: 100,
+    backgroundColor: '#FFFFFF',
+    marginVertical: 5,
+    paddingHorizontal: 25,
+  },
+  numberText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 20,
+    paddingVertical: 18,
+  },
+  numberTextPressed: {
+    color: '#84BED4',
+    fontWeight: '600',
+    fontSize: 20,
+    paddingVertical: 18,
+  },
+  entriesText: {
+    color: '#134687',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 5,
   },
 });
 
