@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {useSession} from '../context/SessionProvider';
@@ -39,48 +40,35 @@ const PatientInfo = ({navigation}) => {
     setOccupation,
     mobileNumber,
     setMobileNumber,
-    reducedVision,
-    setReducedVision,
-    reducedVisionEye,
-    setReducedVisionEye,
+    surgeryEye
   } = useSession();
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: '1', // acts as primary key, should be unique and non-empty string
-        label: 'Left Eye',
-        value: 'Left Eye',
-        containerStyle: styles.radioButton,
-        labelStyle: styles.radioLabel,
-      },
-      {
-        id: '2',
-        label: 'Right Eye',
-        value: 'Right Eye',
-        containerStyle: styles.radioButton,
-        labelStyle: styles.radioLabel,
-      },
-      {
-        id: '3',
-        label: 'Both Eyes',
-        value: 'Both Eyes',
-        containerStyle: styles.radioButton,
-        labelStyle: styles.radioLabel,
-      },
-      {
-        id: '4',
-        label: 'None',
-        value: 'No Surgery Done',
-        containerStyle: styles.radioButton,
-        labelStyle: styles.radioLabel,
-      },
-    ],
-    [],
-  );
+  const [tempBloodGroup,setTempBloodGroup] = useState('');
+  const [tempRhFactor,setTempRhFactor] = useState('');
+
+  const radioButtons = [
+      {id: '1',label: 'Left Eye',value: 'Left Eye',},
+      {id: '2',label: 'Right Eye',value: 'Right Eye',},
+      {id: '3',label: 'Both Eyes',value: 'Both Eyes',},
+      {id: '4',label: 'None',value: 'No Surgery Done',},
+    ]
+  const bloodGroups = [
+      {id: '1',label: 'A',value: 'A',},
+      {id: '2',label: 'B',value: 'B',},
+      {id: '3',label: 'AB',value: 'AB',},
+      {id: '4',label: 'O',value: 'O',},
+    ]
+  const rhFactors = [
+      {id: '1',label: '-',value: '-',},
+      {id: '2',label: '+',value: '+',},
+    ]
 
   const handleSubmit = () => {
+    const currBloodGroup = bloodGroups[tempBloodGroup-1]?.value||'';
+    const currRhGroup = rhFactors[tempRhFactor-1]?.value||'';
+    setBloodGroup(currBloodGroup+currRhGroup)
     setSurgeryEye(radioButtons[cataractSurgery - 1].value);
+    console.log(bloodGroup);
     navigation.navigate('VisionChartResults');
   };
 
@@ -171,16 +159,23 @@ const PatientInfo = ({navigation}) => {
               placeholderTextColor="#8F8F8F"
             />
           </View>
-
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Blood Group:</Text>
-            <TextInput
-              style={styles.input}
-              value={bloodGroup}
-              onChangeText={setBloodGroup}
-              placeholder="Enter Blood Group"
-              placeholderTextColor="#8F8F8F"
-            />
+            <View style={styles.buttonRow}>
+              {bloodGroups.map((element)=>(
+                <TouchableOpacity key={element.id} style={tempBloodGroup===element.id?styles.bloodBtnPressed:styles.bloodBtn} onPress={() => setTempBloodGroup(element.id)}>
+                <Text style={tempBloodGroup===element.id?styles.bloodBtnTextPressed:styles.bloodBtnText}>{element.label}</Text>
+              </TouchableOpacity>
+              ))}    
+            </View>
+            <Text style={styles.label}>Rh Factor:</Text>
+            <View style={styles.buttonRow}>
+              {rhFactors.map((element)=>(
+                <TouchableOpacity key={element.id} style={tempRhFactor===element.id?styles.bloodBtnPressed:styles.bloodBtn} onPress={() => setTempRhFactor(element.id)}>
+                <Text style={tempRhFactor===element.id?styles.bloodBtnTextPressed:styles.bloodBtnText}>{element.label}</Text>
+              </TouchableOpacity>
+              ))}    
+            </View>
           </View>
 
           <View style={styles.inputContainer}>
@@ -189,7 +184,7 @@ const PatientInfo = ({navigation}) => {
               style={styles.input}
               value={diabetes}
               onChangeText={setDiabetes}
-              placeholder="Yes or No"
+              placeholder="Choose Yes or No"
               placeholderTextColor="#8F8F8F"
             />
           </View>
@@ -209,23 +204,27 @@ const PatientInfo = ({navigation}) => {
             />
           </View>
 
+          <View style={styles.inputContainer}>
           <Text style={styles.label}>Cataract Surgery Done:</Text>
-          <View style={styles.radioBox}>
-            <RadioGroup
-              radioButtons={[radioButtons[0], radioButtons[1]]}
-              onPress={setCataractSurgery}
-              selectedId={cataractSurgery}
-              layout="row"
-            />
+          <View>
+            <View style={styles.buttonRow}>
+              {radioButtons.slice(0, 2).map((element)=>(
+                <TouchableOpacity key={element.id} style={cataractSurgery===element.id?styles.cataractBtnPressed:styles.cataractBtn} onPress={() => setCataractSurgery(element.id)}>
+                <Text style={cataractSurgery===element.id?styles.cataractBtnTextPressed:styles.cataractBtnText}>{element.label}</Text>
+              </TouchableOpacity>
+              ))}    
+            </View>
+            <View style={styles.buttonRow}>
+              {radioButtons.slice(2, 4).map((element)=>(
+                <TouchableOpacity key={element.id} style={cataractSurgery===element.id?styles.cataractBtnPressed:styles.cataractBtn} onPress={() => setCataractSurgery(element.id)}>
+                <Text style={cataractSurgery===element.id?styles.cataractBtnTextPressed:styles.cataractBtnText}>{element.label}</Text>
+              </TouchableOpacity>
+              ))}    
+            </View>
+            
           </View>
-          <View style={styles.radioBox}>
-            <RadioGroup
-              radioButtons={[radioButtons[2], radioButtons[3]]}
-              onPress={setCataractSurgery}
-              selectedId={cataractSurgery}
-              layout="row"
-            />
-          </View>
+        </View>
+
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Next</Text>
@@ -242,7 +241,7 @@ const styles = StyleSheet.create({
     paddingTop: 100,
     paddingBottom: 20,
     flexGrow: 1,
-  },  
+  },
   logo: {
     width: 270,
     height: 270,
@@ -251,33 +250,33 @@ const styles = StyleSheet.create({
     top: 30,
   },
   heading: {
-    fontSize: 24, // Larger font size for headings
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#ffffff', // Dark teal for headings
-    textAlign: 'center', // Centered heading
+    color: '#ffffff',
+    textAlign: 'center',
   },
   inputContainer: {
     marginBottom: 20,
-    backgroundColor: '#ffffff', // White background for input containers
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    borderWidth: 1, // Add a border
-    borderColor: '#b2dfdb', // Light teal border color
+    borderWidth: 1,
+    borderColor: '#b2dfdb',
   },
   label: {
     marginBottom: 5,
-    color: '#134687', // Dark teal for labels
-    fontWeight: '600', // Slightly bolder labels
+    color: '#134687',
+    fontWeight: '600',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#b2dfdb', // Light teal border for inputs
+    borderColor: '#b2dfdb',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -289,16 +288,16 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   button: {
-    backgroundColor: '#ffffff', // Darker teal for buttons
+    backgroundColor: '#ffffff',
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 25,
     alignItems: 'center',
     width: '90%',
-    alignSelf:"center",
+    alignSelf: "center",
     marginVertical: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 3,
@@ -308,28 +307,80 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  radioButton: {
-    borderWidth: 1,
-    borderColor: '#b2dfdb',
-    borderRadius: 10,
-    padding: 7,
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 10,
+  },
+  cataractBtn: {
+    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowRadius: 8,
     elevation: 3,
-  },
-  radioLabel: {
-    color: '#00796b',
-    fontWeight: '600',
-  },
-  radioBox: {
-    flex: 1,
-    flexDirection: 'row', // Set flex direction to row for horizontal layout
-    justifyContent: 'space-around', // Distribute space around the radio buttons
-    marginVertical: 1, // Add some vertical margin for spacing
-  },
+    width: '28%',
+ },
+ cataractBtnText:{
+  color:"#134687",
+  textAlign:"center",
+  fontWeight:"600"
+ },
+  cataractBtnPressed: {
+    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: '#134687',
+    width: '28%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+ },
+ cataractBtnTextPressed:{
+  color:"#ffffff",
+  textAlign:"center",
+  fontWeight:"600"
+ },
+  bloodBtn: {
+    borderRadius: 15,
+    paddingVertical: 3,
+    paddingHorizontal: 15,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    // width: '28%',
+ },
+ bloodBtnText:{
+  color:"#134687",
+  textAlign:"center",
+  fontWeight:"600"
+ },
+ bloodBtnPressed: {
+    borderRadius: 15,
+    paddingVertical: 3,
+    paddingHorizontal: 15,
+    backgroundColor: '#134687',
+    // width: '28%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+ },
+ bloodBtnTextPressed:{
+  color:"#ffffff",
+  textAlign:"center",
+  fontWeight:"600"
+ },
 });
+
 
 export default PatientInfo;
