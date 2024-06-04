@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from '../components/Home';
@@ -7,13 +7,18 @@ import {useSession} from '../context/SessionProvider';
 import PatientInfo from '../components/PatientInfo';
 import VisionChartResults from '../components/VisionChartResults';
 import Pdf from '../components/Pdf';
+import LogoScreen from '../components/LogoScreen';
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
+  const [loading,setLoading] = useState(true);
   const {category, setCategory, entries, setEntries} = useSession();
 
   useEffect(() => {
-    get();
+    setLoading(true);
+    setTimeout(() => {
+      get();
+    }, 2000);
   }, []);
 
   const get = async () => {
@@ -25,7 +30,13 @@ const AppNavigation = () => {
     if (tempEntries !== null) {
       setEntries(JSON.parse(tempEntries));
     }
+    setLoading(false);
   };
+  if(loading){
+    return (
+      <LogoScreen/>
+    )
+  }
 
   if (!category) {
     return (
@@ -40,8 +51,8 @@ const AppNavigation = () => {
     );
   } else {
     return (
-      <Stack.Navigator initialRouteName="VisionChartResults" screenOptions={{
-        headerShown: true,
+      <Stack.Navigator initialRouteName="PatientInfo" screenOptions={{
+        headerShown: false,
       }} >
         <Stack.Screen options={{ title: 'Patient Form' }} name="PatientInfo" component={PatientInfo} />
         <Stack.Screen
