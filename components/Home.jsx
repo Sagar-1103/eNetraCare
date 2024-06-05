@@ -17,9 +17,9 @@ function HomeScreen({ navigation }) {
   const handleCategory = category => {
     setClickedButton(category);
     setTimeout(() => {
-      navigation.navigate('License', { category });
       setClickedButton(null);
-    }, 100);
+      navigation.navigate('License', { category });
+    }, 0);
   };
 
   useEffect(() => {

@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, PermissionsAndroid, Platform, Image } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
+  Image,
+} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
+import EyeCam from '../assets/eyeCam.png';
 
-const EyeSection = (props) => {
-  const { setLeftUri, setRightUri } = props;
+const EyeSection = props => {
+  const {setLeftUri, setRightUri} = props;
   const [rightImageUri, setRightImageUri] = useState(null);
   const [leftImageUri, setLeftImageUri] = useState(null);
 
@@ -22,7 +31,7 @@ const EyeSection = (props) => {
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
-          }
+          },
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           console.log('Camera permission granted');
@@ -35,23 +44,25 @@ const EyeSection = (props) => {
     }
   };
 
-  const upload = (side) => {
+  const upload = side => {
     ImagePicker.openCamera({
       width: 300,
       height: 300,
       cropping: true,
       cropperCircleOverlay: true,
-    }).then((image) => {
-      if (side === 'right') {
-        setRightImageUri(image.path);
-        setRightUri(image.path);
-      } else if (side === 'left') {
-        setLeftImageUri(image.path);
-        setLeftUri(image.path);
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+    })
+      .then(image => {
+        if (side === 'right') {
+          setRightImageUri(image.path);
+          setRightUri(image.path);
+        } else if (side === 'left') {
+          setLeftImageUri(image.path);
+          setLeftUri(image.path);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   return (
@@ -59,14 +70,16 @@ const EyeSection = (props) => {
       <Text style={styles.title}>Upload Eye Images</Text>
       <View style={styles.imageButtonContainer}>
         <View style={styles.imageButtonWrapper}>
-          {leftImageUri && <Image source={{ uri: leftImageUri }} style={styles.image} />}
-          {!leftImageUri && <View style={styles.placeholder} />}
-          <Button title="Left Image" onPress={() => upload('left')} color="#00796B" />
+        <Image source={leftImageUri?{uri: leftImageUri}:EyeCam} style={styles.image} />
+          <TouchableOpacity style={styles.imageBtn} onPress={() => upload('left')}>
+          <Text style={styles.imageBtnText}>Left Image</Text>
+        </TouchableOpacity>
         </View>
         <View style={styles.imageButtonWrapper}>
-          {rightImageUri && <Image source={{ uri: rightImageUri }} style={styles.image} />}
-          {!rightImageUri && <View style={styles.placeholder} />}
-          <Button title="Right Image" onPress={() => upload('right')} color="#00796B" />
+            <Image source={rightImageUri?{uri: rightImageUri}:EyeCam} style={styles.image} />
+        <TouchableOpacity style={styles.imageBtn} onPress={() => upload('right')}>
+          <Text style={styles.imageBtnText}>Right Image</Text>
+        </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -78,13 +91,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E0F7FA',
+    backgroundColor: '#FFFFFF',
     padding: 16,
+    borderRadius: 27,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color: '#004D40',
+    color: '#134687',
     fontFamily: 'Roboto',
     fontWeight: 'bold',
   },
@@ -101,10 +115,9 @@ const styles = StyleSheet.create({
   image: {
     height: 120,
     width: 120,
-    borderRadius: 60,
     marginBottom: 10,
     borderWidth: 2,
-    borderColor: '#004D40',
+    borderRadius: 60,
   },
   placeholder: {
     height: 120,
@@ -114,6 +127,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 2,
     borderColor: '#004D40',
+  },
+  imageBtn: {
+    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: '#134687',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    minWidth: 100,
+  },
+  imageBtnText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
 

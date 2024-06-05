@@ -1,11 +1,12 @@
 // Navbar.js
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 
-const Navbar = () => {
+const Navbar = ({children}) => {
   return (
     <View style={styles.navbar}>
-      <Text style={styles.title}>Patient Form</Text>
+      {/* <Text style={styles.title}>Patient Form</Text> */}
+      {children}
     </View>
   );
 };

@@ -6,8 +6,9 @@ import {
   Switch,
   ScrollView,
   StyleSheet,
-  Image,
+  Animated,
   Alert,
+  Image,
   TouchableOpacity,
 } from 'react-native';
 import EyeSection from './EyeSection';
@@ -15,6 +16,9 @@ import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import {useSession} from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Navbar from './Navbar';
+import NavbarBackArrow from '../assets/navbarBackArrow.png';
+import LinearGradient from 'react-native-linear-gradient';
 
 const VisionChartResults = ({navigation}) => {
   const [distantRightEyeResult, setDistantRightEyeResult] = useState('');
@@ -23,6 +27,7 @@ const VisionChartResults = ({navigation}) => {
   const [nearleftEyeResult, setNearLeftEyeResult] = useState('');
   const [consent, setConsent] = useState(false);
   const [leftUri, setLeftUri] = useState(null);
+  const [focusedField, setFocusedField] = useState(null);
   const [rightUri, setRightUri] = useState(null);
   const {
     surgeryEye,
@@ -228,7 +233,9 @@ const VisionChartResults = ({navigation}) => {
           </div>
           <h3>Patient Eye History</h3>
           <div class="form-section">
-           ${otherComplaints!=="" ? ` <div class="form-group">
+           ${
+             otherComplaints !== ''
+               ? ` <div class="form-group">
               <label>Any Other Complaint:</label>
               <input
                 type="text"
@@ -236,18 +243,20 @@ const VisionChartResults = ({navigation}) => {
                 value="${otherComplaints}"
                 readonly
               />
-            </div>`:`<span></span>`}
+            </div>`
+               : `<span></span>`
+           }
             <div class="form-group">
               <label>Cataract Surgery Done:</label>
               <input
                 type="text"
-                value="${surgeryEye==='No Surgery Done' ? 'No' : 'Yes'}"
+                value="${surgeryEye === 'No Surgery Done' ? 'No' : 'Yes'}"
                 readonly
               />
             </div>
     
             ${
-              surgeryEye!=='No Surgery Done'
+              surgeryEye !== 'No Surgery Done'
                 ? `
             <div class="form-group">
               <label>If Yes, in which eye:</label>
@@ -449,95 +458,144 @@ const VisionChartResults = ({navigation}) => {
         folderPath + `/${regNo}_${name.split(' ')[0]}-right.jpg`,
       );
     }
-    
+
     console.log('Pdf Generated', pdf.filePath);
     const tempName = `${regNo}_${entries}`;
     console.log(category, entries);
     navigation.navigate('Pdf', {filePath: pdf.filePath, tempName: tempName});
   };
 
+  const handleFocus = field => {
+    setFocusedField(field);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
+  };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionHeading}>Vision Chart Results</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Distant Vision:</Text>
-          <Text style={styles.label}>Right Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={distantRightEyeResult}
-            onChangeText={setDistantRightEyeResult}
-            placeholder="Enter right eye result"
-            placeholderTextColor="#999"
-            />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Left Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={distantleftEyeResult}
-            onChangeText={setDistantLeftEyeResult}
-            placeholder="Enter left eye result"
-            placeholderTextColor="#999"
-          />
-        </View>
-        
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Near Vision:</Text>
-          <Text style={styles.label}>Right Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={nearRightEyeResult}
-            onChangeText={setNearRightEyeResult}
-            placeholder="Enter right eye result"
-            placeholderTextColor="#999"
-            />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Left Eye:</Text>
-          <TextInput
-            style={styles.input}
-            value={nearleftEyeResult}
-            onChangeText={setNearLeftEyeResult}
-            placeholder="Enter left eye result"
-            placeholderTextColor="#999"
-          />
-        </View>
-
-        <EyeSection setLeftUri={setLeftUri} setRightUri={setRightUri} />
-
-        <View style={styles.consentContainer}>
-          <Text style={styles.label}>
-            Consent for taking eye details and images:
-          </Text>
-          <Switch
-            value={consent}
-            onValueChange={setConsent}
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={consent ? '#f5dd4b' : '#f4f3f4'}
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[styles.button, !consent && {backgroundColor: '#ccc'}]}
-          disabled={!consent}
-          onPress={handleVisionSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
+    <>
+      <Navbar>
+      <View style={styles.leftContent}>
+        <TouchableOpacity onPress={() => navigation.goBack()} >
+        <Image source={NavbarBackArrow} style={styles.arrowImage} />
         </TouchableOpacity>
+        <Text style={styles.title}>Eye Section</Text>
       </View>
-    </ScrollView>
+      </Navbar>
+      <ScrollView>
+        <LinearGradient
+          style={styles.container}
+          colors={['#3EA6D7', '#3EA5D6', '#7DBDD4']}>
+          <Text style={styles.sectionHeading}>Vision Chart Results</Text>
+          <Text style={styles.subHeading}>Distant Vision:</Text>
+          <Animated.View
+            style={[
+              styles.inputContainer,
+              focusedField === 'distantRightEyeResult' &&
+                styles.focusedInputContainer,
+            ]}>
+            <Text style={styles.label}>Right Eye:</Text>
+            <TextInput
+              style={styles.input}
+              value={distantRightEyeResult}
+              onChangeText={setDistantRightEyeResult}
+              onFocus={() => handleFocus('distantRightEyeResult')}
+              onBlur={handleBlur}
+              placeholder="Enter right eye result"
+              selectionColor={'black'}
+              placeholderTextColor="#999"
+            />
+          </Animated.View>
+
+          <Animated.View style={[
+              styles.inputContainer,
+              focusedField === 'distantleftEyeResult' &&
+                styles.focusedInputContainer,
+            ]}>
+            <Text style={styles.label}>Left Eye:</Text>
+            <TextInput
+              style={styles.input}
+              value={distantleftEyeResult}
+              onChangeText={setDistantLeftEyeResult}
+              onFocus={() => handleFocus('distantleftEyeResult')}
+              onBlur={handleBlur}
+              placeholder="Enter left eye result"
+              selectionColor={'black'}
+              placeholderTextColor="#999"
+            />
+          </Animated.View>
+
+          <Text style={styles.subHeading}>Near Vision:</Text>
+          <Animated.View style={[
+              styles.inputContainer,
+              focusedField === 'nearRightEyeResult' &&
+                styles.focusedInputContainer,
+            ]}>
+            <Text style={styles.label}>Right Eye:</Text>
+            <TextInput
+              style={styles.input}
+              value={nearRightEyeResult}
+              onChangeText={setNearRightEyeResult}
+              onFocus={() => handleFocus('nearRightEyeResult')}
+              onBlur={handleBlur}
+              placeholder="Enter right eye result"
+              selectionColor={'black'}
+              placeholderTextColor="#999"
+            />
+          </Animated.View>
+
+          <Animated.View style={[
+              styles.inputContainer,
+              focusedField === 'nearleftEyeResult' &&
+                styles.focusedInputContainer,
+            ]}>
+            <Text style={styles.label}>Left Eye:</Text>
+            <TextInput
+              style={styles.input}
+              value={nearleftEyeResult}
+              onChangeText={setNearLeftEyeResult}
+              onFocus={() => handleFocus('nearleftEyeResult')}
+              onBlur={handleBlur}
+              placeholder="Enter left eye result"
+              selectionColor={'black'}
+              placeholderTextColor="#999"
+            />
+          </Animated.View>
+
+          <EyeSection setLeftUri={setLeftUri} setRightUri={setRightUri} />
+
+          <View style={styles.consentContainer}>
+            <Text style={styles.consentText}>
+              Consent for taking eye details and images:
+            </Text>
+            <Switch
+              value={consent}
+              onValueChange={setConsent}
+              trackColor={{false: '#767577', true: '#134687'}}
+              thumbColor={consent ? '#ffffff' : '#f4f3f4'}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.button, !consent && {backgroundColor: '#ccc'}]}
+            disabled={!consent}
+            onPress={handleVisionSubmit}>
+            <Text style={[styles.buttonText,!consent && {color: '#ffffff'}]}>Submit</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#e6f2ff',
+    paddingHorizontal: 20,
+    paddingTop: 90,
+    paddingBottom: 10,
+    flexGrow: 1,
   },
   sectionContainer: {
-    marginBottom: 20,
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
@@ -548,51 +606,88 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   sectionHeading: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#1f4b70',
+    marginBottom: 20,
+    color: '#ffffff',
     textAlign: 'center',
   },
+  subHeading: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 7,
+    color: '#ffffff',
+    textAlign: 'left',
+    marginLeft:10
+  },
   inputContainer: {
-    marginBottom: 15,
+    marginBottom: 20,
+    backgroundColor: '#ffffff',
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#b2dfdb',
+    transform: [{scale: 1}],
+    transition: 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
+  },
+  focusedInputContainer: {
+    transform: [{scale: 1.05}],
   },
   label: {
     marginBottom: 5,
-    color: '#1f4b70',
+    color: '#134687',
+    fontWeight: '600',
+    fontSize:16
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderColor: '#CBCED5',
+    borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
-    fontSize: 16,
-    color: '#333',
+    backgroundColor: '#ffffff',
+    fontSize: 15,
+    fontWeight:"500",
+    color: '#000000',
   },
   consentContainer: {
-    paddingHorizontal: 10, // so that the switch wass going out of the box
+    paddingHorizontal: 20, // so that the switch wass going out of the box
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
+    justifyContent: 'space-between',
+
+  },
+  consentText:{
+    marginBottom: 5,
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize:16,
+    alignSelf:"center",
+    maxWidth:220
   },
   button: {
-    backgroundColor: '#1e90ff',
-    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 25,
     alignItems: 'center',
-    width: '100%',
-    marginTop: 20,
+    width: '90%',
+    alignSelf: 'center',
+    marginVertical: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 3,
   },
   buttonText: {
-    color: '#fff',
+    color: '#134687',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -602,11 +697,27 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginBottom: 15,
   },
-  imageContainer:{
-    borderStyle:"solid",
-    borderWidth:2,
-    marginVertical:16
-  }
+  imageContainer: {
+    borderStyle: 'solid',
+    borderWidth: 2,
+    marginVertical: 16,
+  },
+  leftContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  title: {
+    color: '#134687',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10, // Adjust the margin as needed
+  },
+  arrowImage: {
+    width: 20,
+    height: 20,
+    marginHorizontal:7
+  },
 });
 
 export default VisionChartResults;
