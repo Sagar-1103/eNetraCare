@@ -1,15 +1,27 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Alert, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet,TouchableOpacity,View, Text, Alert, Image } from 'react-native';
 import RNPrint from 'react-native-print';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '../context/SessionProvider';
-import Logo from "../assets/Innovease_Logo.jpg"
+import Logo from '../assets/enetracareLogo.png';
+import LinearGradient from 'react-native-linear-gradient';
+import Navbar from './Navbar';
 
 const Pdf = ({ route, navigation }) => {
   const { filePath, tempName } = route.params;
-  const {surgeryEye, setSurgeryEye,reducedVisionEye, setReducedVisionEye,reducedVision, setReducedVision,cataractSurgery, setCataractSurgery,otherComplaints, setOtherComplaints,reducedVisionBoth, setReducedVisionBoth,reducedVisionLeft, setReducedVisionLeft,reducedVisionRight, setReducedVisionRight,diabetes, setDiabetes,bloodGroup, setBloodGroup,email, setEmail,category, setCategory, entries, setEntries,regNo, setRegNo,name, setName,age, setAge,gender, setGender,occupation, setOccupation,mobileNumber, setMobileNumber } = useSession();
+  const { surgeryEye, setSurgeryEye, reducedVisionEye, setReducedVisionEye, reducedVision, setReducedVision, cataractSurgery, setCataractSurgery, otherComplaints, setOtherComplaints, reducedVisionBoth, setReducedVisionBoth, reducedVisionLeft, setReducedVisionLeft, reducedVisionRight, setReducedVisionRight, diabetes, setDiabetes, bloodGroup, setBloodGroup, email, setEmail, category, setCategory, entries, setEntries, regNo, setRegNo, name, setName, age, setAge, gender, setGender, occupation, setOccupation, mobileNumber, setMobileNumber } = useSession();
+  const [clickedButton,setClickedButton] = useState(null);
+
+  const functionIsInvoked = (id,func) => {
+    setClickedButton(id);
+    setTimeout(async() => {
+      // console.log(func);
+      await func();
+      setClickedButton(null);
+    }, 500);
+  };
 
   const printPdf = async () => {
     await RNPrint.print({ filePath: filePath });
@@ -53,20 +65,28 @@ const Pdf = ({ route, navigation }) => {
     setSurgeryEye('');
   };
 
+  const buttons = [
+    {id:1, title: 'Download PDF', onPress: () => functionIsInvoked(1,downloadPdf) },
+    {id:2, title: 'Print PDF', onPress: () => functionIsInvoked(2,printPdf) },
+    {id:3, title: 'New Entry', onPress: () => functionIsInvoked(3,handleEntry) },
+  ];
+
   return (
-    <View style={styles.container}>
-      <Image source={Logo} style={styles.logo} />
-      <Text style={styles.headerText}>Patient Document Management</Text>
-      <TouchableOpacity style={styles.button} onPress={downloadPdf}>
-        <Text style={styles.buttonText}>Download PDF</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={printPdf}>
-        <Text style={styles.buttonText}>Print PDF</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleEntry}>
-        <Text style={styles.buttonText}>New Entry</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <Navbar>
+        <Text style={styles.navbarTitle}>Patient Form</Text>
+      </Navbar>
+      <LinearGradient colors={['#A0CDDE', '#7DBDD4', '#3EA6D7']} style={styles.container}>
+        <View style={styles.imageCover} >
+        <Image source={Logo} style={styles.logo} />
+        </View>
+        {buttons.map((button) => (
+          <TouchableOpacity key={button.id} style={clickedButton===button.id?styles.buttonPressed:styles.button} onPress={button.onPress}>
+            <Text style={clickedButton===button.id?styles.buttonPressedText:styles.buttonText}>{button.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </LinearGradient>
+    </>
   );
 };
 
@@ -78,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0f7fa', // Light blue background color for a hospital theme
   },
   logo: {
-    marginBottom: 20,
+    marginBottom: 40,
   },
   headerText: {
     fontSize: 24,
@@ -87,18 +107,57 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   button: {
-    backgroundColor: '#00796b', // Dark teal color
-    padding: 15,
-    borderRadius: 5,
+    backgroundColor: '#ffffff',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 20,
-    width: 200,
+    width: '60%',
+    alignSelf: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
   },
   buttonText: {
-    color: '#fff', // Button text color
-    fontWeight: 'bold',
+    color: '#134687',
     fontSize: 16,
+    fontWeight: 'bold',
   },
+  buttonPressed: {
+    backgroundColor: '#134687',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '60%',
+    alignSelf: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  buttonPressedText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  navbarTitle: {
+    color: '#134687',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 30,
+  },
+  imageCover:{
+    backgroundColor:"#ffffff",
+    padding:10,
+    borderRadius:20,
+    marginBottom:30
+  }
 });
 
 export default Pdf;
