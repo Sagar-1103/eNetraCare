@@ -49,15 +49,13 @@ const VisionChartResults = ({navigation}) => {
     setOphthalmologist,
   } = useSession();
 
-  
   const referOptions = [
-    { id: '1', label: 'Yes', value: 'Yes' },
-    { id: '2', label: 'No', value: 'No' },
+    {id: '1', label: 'Yes', value: 'Yes'},
+    {id: '2', label: 'No', value: 'No'},
   ];
   const [tempReferOption, setTempReferOption] = useState('2');
 
   const handleVisionSubmit = async () => {
-    setOphthalmologist(referOptions[tempReferOption - 1].value);
     const pdfContent = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -309,7 +307,7 @@ const VisionChartResults = ({navigation}) => {
                 <input
                   type="text"
                   name="ophthalmologist"
-                  value="${ophthalmologist}"
+                  value=${ophthalmologist}
                   readonly
                 />
               </div>
@@ -434,14 +432,14 @@ const VisionChartResults = ({navigation}) => {
     const folderPath =
       RNFS.ExternalDirectoryPath + '/../Enetracare/' + regNo + '_' + entries;
     try {
-      await RNFS.mkdir(folderPath, {NSURLIsExcludedFromBackupKey: true}); // Create the directory
+      await RNFS.mkdir(folderPath, {NSURLIsExcludedFromBackupKey: true});
       console.log('Directory created successfully:', folderPath);
     } catch (error) {
       console.error('Error creating directory:', error);
     }
 
     const printOptions = {
-      html: pdfContent, // You can provide HTML content directly if needed
+      html: pdfContent,
       fileName: `${regNo}_${name.split(' ')[0]}-Report`,
       directory: `/../Enetracare/${regNo}_${entries}`,
     };
@@ -485,6 +483,10 @@ const VisionChartResults = ({navigation}) => {
     setFocusedField(null);
   };
 
+  const handleRefer = id => {
+    setTempReferOption(id);
+    setOphthalmologist(referOptions[id - 1].value);
+  };
 
   return (
     <>
@@ -584,13 +586,21 @@ const VisionChartResults = ({navigation}) => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Referral to an Ophthalmologist:</Text>
             <View style={styles.buttonRow}>
-              {referOptions.map((element) => (
+              {referOptions.map(element => (
                 <TouchableOpacity
                   key={element.id}
-                  style={tempReferOption === element.id ? styles.bloodBtnPressed : styles.bloodBtn}
-                  onPress={() => setTempReferOption(element.id)}
-                >
-                  <Text style={tempReferOption === element.id ? styles.bloodBtnTextPressed : styles.bloodBtnText}>
+                  style={
+                    tempReferOption === element.id
+                      ? styles.bloodBtnPressed
+                      : styles.bloodBtn
+                  }
+                  onPress={() => handleRefer(element.id)}>
+                  <Text
+                    style={
+                      tempReferOption === element.id
+                        ? styles.bloodBtnTextPressed
+                        : styles.bloodBtnText
+                    }>
                     {element.label}
                   </Text>
                 </TouchableOpacity>
@@ -646,11 +656,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    width:60,
+    width: 60,
   },
   bloodBtnText: {
     color: '#134687',
@@ -662,9 +672,9 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 15,
     backgroundColor: '#134687',
-    width:60,
+    width: 60,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -698,14 +708,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#ffffff',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    borderWidth: 1,
-    borderColor: '#b2dfdb',
     transform: [{scale: 1}],
     transition: 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
   },
@@ -730,7 +738,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   consentContainer: {
-    paddingHorizontal: 20, // so that the switch wass going out of the box
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
@@ -784,7 +792,7 @@ const styles = StyleSheet.create({
     color: '#134687',
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 10, // Adjust the margin as needed
+    marginLeft: 10,
   },
   arrowImage: {
     width: 20,

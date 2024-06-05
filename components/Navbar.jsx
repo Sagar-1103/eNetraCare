@@ -1,14 +1,8 @@
-// Navbar.js
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import {View, StyleSheet, Platform} from 'react-native';
 
 const Navbar = ({children}) => {
-  return (
-    <View style={styles.navbar}>
-      {/* <Text style={styles.title}>Patient Form</Text> */}
-      {children}
-    </View>
-  );
+  return <View style={styles.navbar}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -27,7 +21,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
       },

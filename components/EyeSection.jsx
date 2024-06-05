@@ -70,16 +70,26 @@ const EyeSection = props => {
       <Text style={styles.title}>Upload Eye Images</Text>
       <View style={styles.imageButtonContainer}>
         <View style={styles.imageButtonWrapper}>
-        <Image source={leftImageUri?{uri: leftImageUri}:EyeCam} style={styles.image} />
-          <TouchableOpacity style={styles.imageBtn} onPress={() => upload('left')}>
-          <Text style={styles.imageBtnText}>Left Image</Text>
-        </TouchableOpacity>
+          <Image
+            source={leftImageUri ? {uri: leftImageUri} : EyeCam}
+            style={styles.image}
+          />
+          <TouchableOpacity
+            style={styles.imageBtn}
+            onPress={() => upload('left')}>
+            <Text style={styles.imageBtnText}>Left Image</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.imageButtonWrapper}>
-            <Image source={rightImageUri?{uri: rightImageUri}:EyeCam} style={styles.image} />
-        <TouchableOpacity style={styles.imageBtn} onPress={() => upload('right')}>
-          <Text style={styles.imageBtnText}>Right Image</Text>
-        </TouchableOpacity>
+          <Image
+            source={rightImageUri ? {uri: rightImageUri} : EyeCam}
+            style={styles.image}
+          />
+          <TouchableOpacity
+            style={styles.imageBtn}
+            onPress={() => upload('right')}>
+            <Text style={styles.imageBtnText}>Right Image</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 16,
     borderRadius: 27,
-    marginBottom:30
+    marginBottom: 30,
   },
   title: {
     fontSize: 24,
@@ -135,7 +145,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#134687',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,

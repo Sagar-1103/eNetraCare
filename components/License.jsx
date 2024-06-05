@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Alert,
+  Modal,
 } from 'react-native';
 import {useSession} from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,7 @@ function License({navigation, route}) {
   const licenseNumbers = ['1234', '2345', '3456', '4567'];
   const entryList = [50, 100, 500, 1000];
   const cat = route.params?.category;
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setLicenseNumber(licenseNumbers[cat - 1]);
@@ -34,15 +35,31 @@ function License({navigation, route}) {
       setEntries(entryList[cat - 1]);
       navigation.navigate('PatientInfo');
     } else {
-      Alert.alert(
-        'Invalid License',
-        'The license number you entered is incorrect.',
-      );
+      setModalVisible(true);
     }
   };
 
   return (
     <>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Invalid License</Text>
+            <Text style={styles.modalDescription}>
+              The license number you entered is incorrect.
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <LinearGradient colors={['#0E93D2', '#A0CDDE']} style={styles.container}>
         <Image source={EyeImage} style={styles.logo} />
         <Text style={styles.title}>Enter License Number</Text>
@@ -58,7 +75,9 @@ function License({navigation, route}) {
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
       </LinearGradient>
-      <TouchableOpacity style={styles.arrowBox} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.arrowBox}
+        onPress={() => navigation.goBack()}>
         <View style={styles.arrowCircle}>
           <Image source={BackArrow} style={styles.arrowImage} />
         </View>
@@ -84,7 +103,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   arrowBox: {
-    flex:1,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
@@ -131,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingVertical: 12,
     paddingHorizontal: 30,
-    borderRadius: 21,
+    borderRadius: 25,
     alignItems: 'center',
     width: '60%',
     marginBottom: 110,
@@ -140,6 +159,45 @@ const styles = StyleSheet.create({
     color: '#033D83',
     fontSize: 20,
     fontWeight: '400',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    marginBottom: 20,
+    textAlign: 'center',
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  modalDescription: {
+    marginBottom: 20,
+    textAlign: 'center',
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '500',
+    width: 250,
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#134687',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  closeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import { useSession } from '../context/SessionProvider';
+import {useSession} from '../context/SessionProvider';
 import Navbar from './Navbar';
 import LinearGradient from 'react-native-linear-gradient';
 import EyeImage from '../assets/licenseEye.png';
+import {SelectList} from 'react-native-dropdown-select-list';
 
-const PatientInfo = ({ navigation }) => {
+const PatientInfo = ({navigation}) => {
   const {
     setCataractSurgery,
     cataractSurgery,
@@ -23,7 +24,6 @@ const PatientInfo = ({ navigation }) => {
     setOtherComplaints,
     diabetes,
     setDiabetes,
-    bloodGroup,
     setBloodGroup,
     email,
     setEmail,
@@ -45,23 +45,33 @@ const PatientInfo = ({ navigation }) => {
   const [tempRhFactor, setTempRhFactor] = useState('');
   const [focusedField, setFocusedField] = useState(null);
 
+  const genderOptions = [
+    {key: '1', value: 'Male'},
+    {key: '2', value: 'Female'},
+    {key: '3', value: 'Others'},
+  ];
+  const diabetesOptions = [
+    {key: '1', value: 'Yes'},
+    {key: '2', value: 'No'},
+  ];
+
   const radioButtons = [
-    { id: '1', label: 'Left Eye', value: 'Left Eye' },
-    { id: '2', label: 'Right Eye', value: 'Right Eye' },
-    { id: '3', label: 'Both Eyes', value: 'Both Eyes' },
-    { id: '4', label: 'None', value: 'No Surgery Done' },
+    {id: '1', label: 'Left Eye', value: 'Left Eye'},
+    {id: '2', label: 'Right Eye', value: 'Right Eye'},
+    {id: '3', label: 'Both Eyes', value: 'Both Eyes'},
+    {id: '4', label: 'None', value: 'No Surgery Done'},
   ];
 
   const bloodGroups = [
-    { id: '1', label: 'A', value: 'A' },
-    { id: '2', label: 'B', value: 'B' },
-    { id: '3', label: 'AB', value: 'AB' },
-    { id: '4', label: 'O', value: 'O' },
+    {id: '1', label: 'A', value: 'A'},
+    {id: '2', label: 'B', value: 'B'},
+    {id: '3', label: 'AB', value: 'AB'},
+    {id: '4', label: 'O', value: 'O'},
   ];
 
   const rhFactors = [
-    { id: '1', label: '-', value: '-' },
-    { id: '2', label: '+', value: '+' },
+    {id: '1', label: '-', value: '-'},
+    {id: '2', label: '+', value: '+'},
   ];
 
   const handleSubmit = () => {
@@ -69,11 +79,10 @@ const PatientInfo = ({ navigation }) => {
     const currRhGroup = rhFactors[tempRhFactor - 1]?.value || '';
     setBloodGroup(currBloodGroup + currRhGroup);
     setSurgeryEye(radioButtons[cataractSurgery - 1].value);
-    console.log(bloodGroup);
     navigation.navigate('VisionChartResults');
   };
 
-  const handleFocus = (field) => {
+  const handleFocus = field => {
     setFocusedField(field);
   };
 
@@ -84,13 +93,12 @@ const PatientInfo = ({ navigation }) => {
   return (
     <>
       <Navbar>
-      <Text style={styles.navbarTitle}>Patient Form</Text>
+        <Text style={styles.navbarTitle}>Patient Form</Text>
       </Navbar>
       <ScrollView>
         <LinearGradient
           style={styles.container}
-          colors={['#3EA6D7', '#30A1D2', '#80BDD4']}
-        >
+          colors={['#3EA6D7', '#30A1D2', '#80BDD4']}>
           <Image source={EyeImage} style={styles.logo} />
           <Text style={styles.heading}>Basic Patient Information</Text>
 
@@ -98,8 +106,7 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'regNo' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Registration No:</Text>
             <TextInput
               style={styles.input}
@@ -117,8 +124,7 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'name' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Name:</Text>
             <TextInput
               style={styles.input}
@@ -129,6 +135,7 @@ const PatientInfo = ({ navigation }) => {
               placeholder="Enter Full Name"
               selectionColor={'black'}
               placeholderTextColor="#8F8F8F"
+              autoCapitalize="words"
             />
           </Animated.View>
 
@@ -136,8 +143,7 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'age' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Age:</Text>
             <TextInput
               style={styles.input}
@@ -152,48 +158,33 @@ const PatientInfo = ({ navigation }) => {
             />
           </Animated.View>
 
-          <Animated.View style={[
+          <Animated.View
+            style={[
               styles.inputContainer,
               focusedField === 'gender' && styles.focusedInputContainer,
             ]}>
             <Text style={styles.label}>Gender:</Text>
-            <TextInput
-              style={styles.input}
-              value={gender}
-              onFocus={() => handleFocus('gender')}
-              onBlur={handleBlur}
-              onChangeText={setGender}
+            <SelectList
+              setSelected={val => setGender(val)}
+              data={genderOptions}
+              save="value"
+              search={false}
+              boxStyles={styles.box} 
+              dropdownStyles={styles.dropdown} 
+              inputStyles={
+                !gender ? styles.optionInput : styles.optionPressedInput
+              } 
+              dropdownItemStyles={styles.item} 
+              dropdownTextStyles={styles.itemText} 
               placeholder="Choose"
-              selectionColor={'black'}
-              placeholderTextColor="#8F8F8F"
             />
           </Animated.View>
-
-
-          {/* <View style={styles.inputContainer}>
-            <Text style={styles.label}>Gender:</Text>
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={gender === 'Male' ? styles.genderBtnPressed : styles.genderBtn}
-                onPress={() => setGender('Male')}
-              >
-                <Text style={gender === 'Male' ? styles.genderBtnTextPressed : styles.genderBtnText}>Male</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={gender === 'Female' ? styles.genderBtnPressed : styles.genderBtn}
-                onPress={() => setGender('Female')}
-              >
-                <Text style={gender === 'Female' ? styles.genderBtnTextPressed : styles.genderBtnText}>Female</Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
 
           <Animated.View
             style={[
               styles.inputContainer,
               focusedField === 'occupation' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Occupation:</Text>
             <TextInput
               style={styles.input}
@@ -211,8 +202,7 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'mobileNumber' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Mobile Number:</Text>
             <TextInput
               style={styles.input}
@@ -231,8 +221,7 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'email' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Email ID:</Text>
             <TextInput
               style={styles.input}
@@ -244,19 +233,28 @@ const PatientInfo = ({ navigation }) => {
               placeholder="Enter Email Address"
               selectionColor={'black'}
               placeholderTextColor="#8F8F8F"
+              autoCapitalize="none"
             />
           </Animated.View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Blood Group:</Text>
             <View style={styles.buttonRow}>
-              {bloodGroups.map((element) => (
+              {bloodGroups.map(element => (
                 <TouchableOpacity
                   key={element.id}
-                  style={tempBloodGroup === element.id ? styles.bloodBtnPressed : styles.bloodBtn}
-                  onPress={() => setTempBloodGroup(element.id)}
-                >
-                  <Text style={tempBloodGroup === element.id ? styles.bloodBtnTextPressed : styles.bloodBtnText}>
+                  style={
+                    tempBloodGroup === element.id
+                      ? styles.bloodBtnPressed
+                      : styles.bloodBtn
+                  }
+                  onPress={() => setTempBloodGroup(element.id)}>
+                  <Text
+                    style={
+                      tempBloodGroup === element.id
+                        ? styles.bloodBtnTextPressed
+                        : styles.bloodBtnText
+                    }>
                     {element.label}
                   </Text>
                 </TouchableOpacity>
@@ -264,13 +262,21 @@ const PatientInfo = ({ navigation }) => {
             </View>
             <Text style={styles.label}>Rh Factor:</Text>
             <View style={styles.buttonRow}>
-              {rhFactors.map((element) => (
+              {rhFactors.map(element => (
                 <TouchableOpacity
                   key={element.id}
-                  style={tempRhFactor === element.id ? styles.bloodBtnPressed : styles.bloodBtn}
-                  onPress={() => setTempRhFactor(element.id)}
-                >
-                  <Text style={tempRhFactor === element.id ? styles.bloodBtnTextPressed : styles.bloodBtnText}>
+                  style={
+                    tempRhFactor === element.id
+                      ? styles.bloodBtnPressed
+                      : styles.bloodBtn
+                  }
+                  onPress={() => setTempRhFactor(element.id)}>
+                  <Text
+                    style={
+                      tempRhFactor === element.id
+                        ? styles.bloodBtnTextPressed
+                        : styles.bloodBtnText
+                    }>
                     {element.label}
                   </Text>
                 </TouchableOpacity>
@@ -282,18 +288,21 @@ const PatientInfo = ({ navigation }) => {
             style={[
               styles.inputContainer,
               focusedField === 'diabetes' && styles.focusedInputContainer,
-            ]}
-          >
+            ]}>
             <Text style={styles.label}>Diabetes:</Text>
-            <TextInput
-              style={styles.input}
-              value={diabetes}
-              onChangeText={setDiabetes}
-              onFocus={() => handleFocus('diabetes')}
-              onBlur={handleBlur}
-              placeholder="Choose Yes or No"
-              placeholderTextColor="#8F8F8F"
-              selectionColor={'black'}
+            <SelectList
+              setSelected={val => setDiabetes(val)}
+              data={diabetesOptions}
+              save="value"
+              search={false}
+              boxStyles={styles.box} 
+              dropdownStyles={styles.dropdown} 
+              inputStyles={
+                !diabetes ? styles.optionInput : styles.optionPressedInput
+              } 
+              dropdownItemStyles={styles.item} 
+              dropdownTextStyles={styles.itemText} 
+              placeholder="Choose"
             />
           </Animated.View>
 
@@ -302,9 +311,9 @@ const PatientInfo = ({ navigation }) => {
           <Animated.View
             style={[
               styles.inputContainer,
-              focusedField === 'otherComplaints' && styles.focusedInputContainer,
-            ]}
-          >
+              focusedField === 'otherComplaints' &&
+                styles.focusedInputContainer,
+            ]}>
             <Text style={styles.label}>Other Complaints:</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
@@ -324,26 +333,42 @@ const PatientInfo = ({ navigation }) => {
             <Text style={styles.label}>Cataract Surgery Done:</Text>
             <View>
               <View style={styles.buttonRow}>
-                {radioButtons.slice(0, 2).map((element) => (
+                {radioButtons.slice(0, 2).map(element => (
                   <TouchableOpacity
                     key={element.id}
-                    style={cataractSurgery === element.id ? styles.cataractBtnPressed : styles.cataractBtn}
-                    onPress={() => setCataractSurgery(element.id)}
-                  >
-                    <Text style={cataractSurgery === element.id ? styles.cataractBtnTextPressed : styles.cataractBtnText}>
+                    style={
+                      cataractSurgery === element.id
+                        ? styles.cataractBtnPressed
+                        : styles.cataractBtn
+                    }
+                    onPress={() => setCataractSurgery(element.id)}>
+                    <Text
+                      style={
+                        cataractSurgery === element.id
+                          ? styles.cataractBtnTextPressed
+                          : styles.cataractBtnText
+                      }>
                       {element.label}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
               <View style={styles.buttonRow}>
-                {radioButtons.slice(2, 4).map((element) => (
+                {radioButtons.slice(2, 4).map(element => (
                   <TouchableOpacity
                     key={element.id}
-                    style={cataractSurgery === element.id ? styles.cataractBtnPressed : styles.cataractBtn}
-                    onPress={() => setCataractSurgery(element.id)}
-                  >
-                    <Text style={cataractSurgery === element.id ? styles.cataractBtnTextPressed : styles.cataractBtnText}>
+                    style={
+                      cataractSurgery === element.id
+                        ? styles.cataractBtnPressed
+                        : styles.cataractBtn
+                    }
+                    onPress={() => setCataractSurgery(element.id)}>
+                    <Text
+                      style={
+                        cataractSurgery === element.id
+                          ? styles.cataractBtnTextPressed
+                          : styles.cataractBtnText
+                      }>
                       {element.label}
                     </Text>
                   </TouchableOpacity>
@@ -386,25 +411,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#ffffff',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    borderWidth: 1,
-    borderColor: '#b2dfdb',
-    transform: [{ scale: 1 }],
+    transform: [{scale: 1}],
     transition: 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
   },
   focusedInputContainer: {
-    transform: [{ scale: 1.05 }],
+    transform: [{scale: 1.05}],
   },
   label: {
     marginBottom: 5,
     color: '#134687',
     fontWeight: '600',
-    fontSize:16
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,
@@ -414,7 +437,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     fontSize: 15,
-    fontWeight:"500",
+    fontWeight: '500',
     color: '#000000',
   },
   textArea: {
@@ -430,7 +453,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 3,
@@ -451,7 +474,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -468,7 +491,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#134687',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -481,11 +504,11 @@ const styles = StyleSheet.create({
   },
   bloodBtn: {
     borderRadius: 15,
-    paddingVertical: 3,
-    paddingHorizontal: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 18,
     backgroundColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -497,11 +520,11 @@ const styles = StyleSheet.create({
   },
   bloodBtnPressed: {
     borderRadius: 15,
-    paddingVertical: 3,
-    paddingHorizontal: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 18,
     backgroundColor: '#134687',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -517,7 +540,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -534,7 +557,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#134687',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -550,6 +573,49 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginLeft: 30,
+  },
+  box: {
+    borderWidth: 1,
+    borderColor: '#CBCED5',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#ffffff',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#000000',
+  },
+  optionInput: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#8F8F8F',
+  },
+  optionPressedInput: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'black',
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    elevation: 3,
+    shadowColor: '#000', 
+    shadowOffset: {width: 0, height: 2}, 
+    shadowOpacity: 0.2, 
+    shadowRadius: 2, 
+  },
+  item: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  itemText: {
+    fontSize: 16,
+    color: 'gray',
+    fontWeight: '600',
   },
 });
 

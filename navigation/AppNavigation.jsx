@@ -11,7 +11,7 @@ import LogoScreen from '../components/LogoScreen';
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const {category, setCategory, entries, setEntries} = useSession();
 
   useEffect(() => {
@@ -32,10 +32,8 @@ const AppNavigation = () => {
     }
     setLoading(false);
   };
-  if(loading){
-    return (
-      <LogoScreen/>
-    )
+  if (loading) {
+    return <LogoScreen />;
   }
 
   if (!category) {
@@ -51,17 +49,26 @@ const AppNavigation = () => {
     );
   } else {
     return (
-      <Stack.Navigator initialRouteName="VisionChartResults" screenOptions={{
-        headerShown: false,
-      }} >
-        <Stack.Screen options={{ title: 'Patient Form' }} name="PatientInfo" component={PatientInfo} />
+      <Stack.Navigator
+        initialRouteName="PatientInfo"
+        screenOptions={{
+          headerShown: false,
+        }}>
         <Stack.Screen
-        options={{ title: 'Eye Section' }}
+          options={{title: 'Patient Form'}}
+          name="PatientInfo"
+          component={PatientInfo}
+        />
+        <Stack.Screen
+          options={{title: 'Eye Section'}}
           name="VisionChartResults"
           component={VisionChartResults}
         />
         <Stack.Screen
-        options={{ title: 'Patient Document Management'}} name="Pdf" component={Pdf} />
+          options={{title: 'Patient Document Management'}}
+          name="Pdf"
+          component={Pdf}
+        />
       </Stack.Navigator>
     );
   }
