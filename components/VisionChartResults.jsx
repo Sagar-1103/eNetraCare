@@ -31,7 +31,6 @@ const VisionChartResults = ({navigation}) => {
   const [rightUri, setRightUri] = useState(null);
   const {
     surgeryEye,
-    cataractSurgery,
     otherComplaints,
     diabetes,
     bloodGroup,
@@ -46,15 +45,19 @@ const VisionChartResults = ({navigation}) => {
     gender,
     occupation,
     mobileNumber,
-    reducedVisionEye,
-    reducedVision,
+    ophthalmologist,
+    setOphthalmologist,
   } = useSession();
 
+  
+  const referOptions = [
+    { id: '1', label: 'Yes', value: 'Yes' },
+    { id: '2', label: 'No', value: 'No' },
+  ];
+  const [tempReferOption, setTempReferOption] = useState('2');
+
   const handleVisionSubmit = async () => {
-    // if (!rightUri || !leftUri) {
-    //   Alert.alert("Eye Images Not Uploaded");
-    //   return;
-    // }
+    setOphthalmologist(referOptions[tempReferOption - 1].value);
     const pdfContent = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -300,7 +303,16 @@ const VisionChartResults = ({navigation}) => {
                 <label> &ensp; &ensp; Left Eye Score:</label>
                 <input type="text" name="leftEye" value="${nearleftEyeResult}" readonly />
               </div>
-
+              
+              <div class="form-group">
+              <label>Referral to an Ophthalmologist:</label>
+                <input
+                  type="text"
+                  name="ophthalmologist"
+                  value="${ophthalmologist}"
+                  readonly
+                />
+              </div>
             </div>
             
             
@@ -472,15 +484,17 @@ const VisionChartResults = ({navigation}) => {
   const handleBlur = () => {
     setFocusedField(null);
   };
+
+
   return (
     <>
       <Navbar>
-      <View style={styles.leftContent}>
-        <TouchableOpacity onPress={() => navigation.goBack()} >
-        <Image source={NavbarBackArrow} style={styles.arrowImage} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Eye Section</Text>
-      </View>
+        <View style={styles.leftContent}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={NavbarBackArrow} style={styles.arrowImage} />
+          </TouchableOpacity>
+          <Text style={styles.title}>Eye Section</Text>
+        </View>
       </Navbar>
       <ScrollView>
         <LinearGradient
@@ -507,7 +521,8 @@ const VisionChartResults = ({navigation}) => {
             />
           </Animated.View>
 
-          <Animated.View style={[
+          <Animated.View
+            style={[
               styles.inputContainer,
               focusedField === 'distantleftEyeResult' &&
                 styles.focusedInputContainer,
@@ -526,7 +541,8 @@ const VisionChartResults = ({navigation}) => {
           </Animated.View>
 
           <Text style={styles.subHeading}>Near Vision:</Text>
-          <Animated.View style={[
+          <Animated.View
+            style={[
               styles.inputContainer,
               focusedField === 'nearRightEyeResult' &&
                 styles.focusedInputContainer,
@@ -544,7 +560,8 @@ const VisionChartResults = ({navigation}) => {
             />
           </Animated.View>
 
-          <Animated.View style={[
+          <Animated.View
+            style={[
               styles.inputContainer,
               focusedField === 'nearleftEyeResult' &&
                 styles.focusedInputContainer,
@@ -564,6 +581,23 @@ const VisionChartResults = ({navigation}) => {
 
           <EyeSection setLeftUri={setLeftUri} setRightUri={setRightUri} />
 
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Referral to an Ophthalmologist:</Text>
+            <View style={styles.buttonRow}>
+              {referOptions.map((element) => (
+                <TouchableOpacity
+                  key={element.id}
+                  style={tempReferOption === element.id ? styles.bloodBtnPressed : styles.bloodBtn}
+                  onPress={() => setTempReferOption(element.id)}
+                >
+                  <Text style={tempReferOption === element.id ? styles.bloodBtnTextPressed : styles.bloodBtnText}>
+                    {element.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
           <View style={styles.consentContainer}>
             <Text style={styles.consentText}>
               Consent for taking eye details and images:
@@ -580,7 +614,9 @@ const VisionChartResults = ({navigation}) => {
             style={[styles.button, !consent && {backgroundColor: '#ccc'}]}
             disabled={!consent}
             onPress={handleVisionSubmit}>
-            <Text style={[styles.buttonText,!consent && {color: '#ffffff'}]}>Submit</Text>
+            <Text style={[styles.buttonText, !consent && {color: '#ffffff'}]}>
+              Submit
+            </Text>
           </TouchableOpacity>
         </LinearGradient>
       </ScrollView>
@@ -605,6 +641,44 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  bloodBtn: {
+    borderRadius: 15,
+    paddingVertical: 5,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    width:60,
+  },
+  bloodBtnText: {
+    color: '#134687',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  bloodBtnPressed: {
+    borderRadius: 15,
+    paddingVertical: 3,
+    paddingHorizontal: 15,
+    backgroundColor: '#134687',
+    width:60,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  bloodBtnTextPressed: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 15,
+  },
   sectionHeading: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -618,7 +692,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     color: '#ffffff',
     textAlign: 'left',
-    marginLeft:10
+    marginLeft: 10,
   },
   inputContainer: {
     marginBottom: 20,
@@ -642,7 +716,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: '#134687',
     fontWeight: '600',
-    fontSize:16
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,
@@ -652,7 +726,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     fontSize: 15,
-    fontWeight:"500",
+    fontWeight: '500',
     color: '#000000',
   },
   consentContainer: {
@@ -661,15 +735,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 20,
     justifyContent: 'space-between',
-
   },
-  consentText:{
+  consentText: {
     marginBottom: 5,
     color: '#ffffff',
     fontWeight: '600',
-    fontSize:16,
-    alignSelf:"center",
-    maxWidth:220
+    fontSize: 16,
+    alignSelf: 'center',
+    maxWidth: 220,
   },
   button: {
     backgroundColor: '#ffffff',
@@ -681,7 +754,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 3,
@@ -716,7 +789,7 @@ const styles = StyleSheet.create({
   arrowImage: {
     width: 20,
     height: 20,
-    marginHorizontal:7
+    marginHorizontal: 7,
   },
 });
 

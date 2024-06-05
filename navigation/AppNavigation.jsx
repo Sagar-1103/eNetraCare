@@ -51,7 +51,7 @@ const AppNavigation = () => {
     );
   } else {
     return (
-      <Stack.Navigator initialRouteName="PatientInfo" screenOptions={{
+      <Stack.Navigator initialRouteName="VisionChartResults" screenOptions={{
         headerShown: false,
       }} >
         <Stack.Screen options={{ title: 'Patient Form' }} name="PatientInfo" component={PatientInfo} />

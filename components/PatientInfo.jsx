@@ -489,7 +489,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    // width: '28%',
   },
   bloodBtnText: {
     color: '#134687',
@@ -501,7 +500,6 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 15,
     backgroundColor: '#134687',
-    // width: '28%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

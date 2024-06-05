@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet,TouchableOpacity,View, Text, Alert, Image } from 'react-native';
+import { StyleSheet,TouchableOpacity,View, Text,Modal, Alert, Image } from 'react-native';
 import RNPrint from 'react-native-print';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
@@ -13,6 +13,7 @@ const Pdf = ({ route, navigation }) => {
   const { filePath, tempName } = route.params;
   const { surgeryEye, setSurgeryEye, reducedVisionEye, setReducedVisionEye, reducedVision, setReducedVision, cataractSurgery, setCataractSurgery, otherComplaints, setOtherComplaints, reducedVisionBoth, setReducedVisionBoth, reducedVisionLeft, setReducedVisionLeft, reducedVisionRight, setReducedVisionRight, diabetes, setDiabetes, bloodGroup, setBloodGroup, email, setEmail, category, setCategory, entries, setEntries, regNo, setRegNo, name, setName, age, setAge, gender, setGender, occupation, setOccupation, mobileNumber, setMobileNumber } = useSession();
   const [clickedButton,setClickedButton] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const functionIsInvoked = (id,func) => {
     setClickedButton(id);
@@ -32,8 +33,8 @@ const Pdf = ({ route, navigation }) => {
       const id = uuid.v4().slice(0, 2);
       const destinationPath = `${RNFS.DownloadDirectoryPath}/${tempName}-${id}.pdf`;
       await RNFS.copyFile(filePath, destinationPath);
-      console.log(filePath);
-      Alert.alert('Download Successful', `PDF downloaded to downloads folder.`);
+      // console.log(filePath);
+      setModalVisible(true);
     } catch (error) {
       console.error('Error downloading PDF:', error);
       Alert.alert('Download Failed', 'An error occurred while downloading the PDF');
@@ -73,6 +74,25 @@ const Pdf = ({ route, navigation }) => {
 
   return (
     <>
+    <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Download Successful</Text>
+            <Text style={styles.modalDescription}>PDF downloaded to downloads folder.</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close Modal</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <Navbar>
         <Text style={styles.navbarTitle}>Patient Form</Text>
       </Navbar>
@@ -95,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0f7fa', // Light blue background color for a hospital theme
+    backgroundColor: '#e0f7fa',
   },
   logo: {
     marginBottom: 40,
@@ -157,7 +177,46 @@ const styles = StyleSheet.create({
     padding:10,
     borderRadius:20,
     marginBottom:30
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    marginBottom: 20,
+    textAlign: 'center',
+    color:"black",
+    fontSize:20,
+    fontWeight:"900"
+  },
+  modalDescription: {
+    marginBottom: 20,
+    textAlign: 'center',
+    color:"black",
+    fontSize:16,
+    fontWeight:"500",
+    width:250
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#134687',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  closeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
 });
 
 export default Pdf;

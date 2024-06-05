@@ -24,9 +24,10 @@ const SessionProvider = props => {
   const [otherComplaints, setOtherComplaints] = useState('');
   const [cataractSurgery, setCataractSurgery] = useState('4');
   const [surgeryEye, setSurgeryEye] = useState('');
+  const [ophthalmologist , setOphthalmologist ] = useState(false);
   return (
     <SessionContext.Provider
-      value={{surgeryEye, setSurgeryEye,reducedVisionEye, setReducedVisionEye,reducedVision, setReducedVision,cataractSurgery, setCataractSurgery,otherComplaints, setOtherComplaints,reducedVisionBoth, setReducedVisionBoth,reducedVisionLeft, setReducedVisionLeft,reducedVisionRight, setReducedVisionRight,diabetes, setDiabetes,bloodGroup, setBloodGroup,email, setEmail,category, setCategory, entries, setEntries,regNo, setRegNo,name, setName,age, setAge,gender, setGender,occupation, setOccupation,mobileNumber, setMobileNumber}}>
+      value={{ophthalmologist , setOphthalmologist ,surgeryEye, setSurgeryEye,reducedVisionEye, setReducedVisionEye,reducedVision, setReducedVision,cataractSurgery, setCataractSurgery,otherComplaints, setOtherComplaints,reducedVisionBoth, setReducedVisionBoth,reducedVisionLeft, setReducedVisionLeft,reducedVisionRight, setReducedVisionRight,diabetes, setDiabetes,bloodGroup, setBloodGroup,email, setEmail,category, setCategory, entries, setEntries,regNo, setRegNo,name, setName,age, setAge,gender, setGender,occupation, setOccupation,mobileNumber, setMobileNumber}}>
       {props.children}
     </SessionContext.Provider>
   );
