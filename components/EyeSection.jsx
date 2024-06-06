@@ -46,10 +46,13 @@ const EyeSection = props => {
 
   const upload = side => {
     ImagePicker.openCamera({
-      width: 300,
-      height: 300,
+      width: 1024,
+      height: 1024,
       cropping: true,
       cropperCircleOverlay: true,
+      compressImageQuality: 1, // 1 means no compression, 0 means maximum compression
+      compressImageMaxWidth: 1024, // set maximum width
+      compressImageMaxHeight: 1024,
     })
       .then(image => {
         if (side === 'right') {
@@ -59,6 +62,7 @@ const EyeSection = props => {
           setLeftImageUri(image.path);
           setLeftUri(image.path);
         }
+        console.log(image.size);
       })
       .catch(error => {
         console.log(error);

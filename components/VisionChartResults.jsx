@@ -18,6 +18,7 @@ import {useSession} from '../context/SessionProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navbar from './Navbar';
 import NavbarBackArrow from '../assets/navbarBackArrow.png';
+import ImagePicker from 'react-native-image-crop-picker';
 import LinearGradient from 'react-native-linear-gradient';
 
 const VisionChartResults = ({navigation}) => {
@@ -470,8 +471,16 @@ const VisionChartResults = ({navigation}) => {
     }
 
     console.log('Pdf Generated', pdf.filePath);
+
+    const deletionPath = RNFS.ExternalDirectoryPath + '/Pictures';
+    try {
+      await RNFS.unlink(deletionPath);
+      console.log('Folder Deleted');
+    } catch (error) {
+      console.log('Deletion Error : ', error);
+    }
+
     const tempName = `${regNo}_${entries}`;
-    console.log(category, entries);
     navigation.navigate('Pdf', {filePath: pdf.filePath, tempName: tempName});
   };
 
