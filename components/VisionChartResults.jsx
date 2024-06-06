@@ -430,6 +430,96 @@ const VisionChartResults = ({navigation}) => {
     </html>
     `;
 
+    const eyeHtml = (eye,sideURI) => {
+      const page = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${eye} Eye Image with Eye Score</title>
+    <style>
+        @page {
+            margin: 0; /* Remove default margin when printing */
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+        }
+        .circle-container {
+            position: relative;
+            width: 90vw; /* Use 90% of viewport width */
+            height: 90vw; /* Make it a circle by setting height equal to width */
+            max-width: 90vh; /* Ensure it doesn't exceed viewport height */
+            max-height: 90vh; /* Ensure it doesn't exceed viewport height */
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .circle-container .bg {
+            width: 100%;
+            height: 100%;
+            background-image: url(${sideURI}); /* Replace with your image URL */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .eye-score {
+            position: absolute;
+            display: flex;
+            color: red;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 5px;
+            width: 100%;
+            justify-content: center;
+            bottom: -10px;
+            text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white;
+        }
+        .eye-text {
+            margin: 0 20px 30px;
+        }
+        .eye-heading {
+            position: absolute;
+            display: flex;
+            color: black;
+            padding-top: 20px;
+            font-size: 25px;
+            font-weight: bolder;
+            border-radius: 5px;
+            width: 100%;
+            justify-content: center;
+            top: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="eye-heading">${eye} Eye Detailed Image</div>
+    <div class="circle-container">
+        <div class="bg"></div>
+        <div class="eye-score">
+            <div class="eye-text">
+                Distant Vision: <br />
+                Right Eye: <span id="distant-right-eye">${!distantRightEyeResult?"  - ":distantRightEyeResult}</span><br />
+                Left Eye: <span id="distant-left-eye">${!distantleftEyeResult?"  - ":distantleftEyeResult}</span>
+            </div>
+            <div class="eye-text">
+                Near Vision: <br />
+                Right Eye: <span id="near-right-eye">${!nearRightEyeResult?"  - ":nearRightEyeResult}</span><br />
+                Left Eye: <span id="near-left-eye">${!nearleftEyeResult?"  - ":nearleftEyeResult}</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+`;
+      return page;
+    };
+
     const folderPath =
       RNFS.ExternalDirectoryPath + '/../Enetracare/' + regNo + '_' + entries;
     try {
@@ -443,6 +533,13 @@ const VisionChartResults = ({navigation}) => {
       html: pdfContent,
       fileName: `${regNo}_${name.split(' ')[0]}-Report`,
       directory: `/../Enetracare/${regNo}_${entries}`,
+    };
+    const imagePrintOptions = (eye,uri) => {
+      return {
+        html: eyeHtml(eye,uri),
+        fileName: `${regNo}_${name.split(' ')[0]}-${eye}(Detailed)`,
+        directory: `/../Enetracare/${regNo}_${entries}`,
+      };
     };
     if (entries < 1) {
       Alert.alert('Session Expired');
@@ -461,6 +558,8 @@ const VisionChartResults = ({navigation}) => {
         leftUri,
         folderPath + `/${regNo}_${name.split(' ')[0]}-left.jpg`,
       );
+      let leftpdf = await RNHTMLtoPDF.convert(imagePrintOptions("Left",leftUri));
+      console.log("left Pdf Generated",leftpdf.filePath);
     }
 
     if (rightUri) {
@@ -468,6 +567,8 @@ const VisionChartResults = ({navigation}) => {
         rightUri,
         folderPath + `/${regNo}_${name.split(' ')[0]}-right.jpg`,
       );
+      let rightpdf = await RNHTMLtoPDF.convert(imagePrintOptions("Right",rightUri));
+      console.log("left Pdf Generated",rightpdf.filePath);
     }
 
     console.log('Pdf Generated', pdf.filePath);

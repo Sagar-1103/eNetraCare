@@ -53,6 +53,7 @@ const EyeSection = props => {
       compressImageQuality: 1, // 1 means no compression, 0 means maximum compression
       compressImageMaxWidth: 1024, // set maximum width
       compressImageMaxHeight: 1024,
+      cropperToolbarTitle:"Crop Eye Image",
     })
       .then(image => {
         if (side === 'right') {
