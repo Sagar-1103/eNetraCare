@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useRef} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Animated,
+  Animated,Easing
 } from 'react-native';
 import {useSession} from '../context/SessionProvider';
 import Navbar from './Navbar';
@@ -43,8 +43,15 @@ const PatientInfo = ({navigation}) => {
 
   const [tempBloodGroup, setTempBloodGroup] = useState('');
   const [tempRhFactor, setTempRhFactor] = useState('');
-  const [focusedField, setFocusedField] = useState(null);
-
+  const regScale = useRef(new Animated.Value(1)).current;
+  const nameScale = useRef(new Animated.Value(1)).current;
+  const ageScale = useRef(new Animated.Value(1)).current;
+  const genderScale = useRef(new Animated.Value(1)).current;
+  const occupationScale = useRef(new Animated.Value(1)).current;
+  const mobileScale = useRef(new Animated.Value(1)).current;
+  const emailScale = useRef(new Animated.Value(1)).current;
+  const diabetesScale = useRef(new Animated.Value(1)).current;
+  const complaintsScale = useRef(new Animated.Value(1)).current;
   const genderOptions = [
     {key: '1', value: 'Male'},
     {key: '2', value: 'Female'},
@@ -82,14 +89,32 @@ const PatientInfo = ({navigation}) => {
     navigation.navigate('VisionChartResults');
   };
 
-  const handleFocus = field => {
-    setFocusedField(field);
+  const handleFocus = (scale) => {
+    Animated.timing(scale, {
+      toValue: 1.05,
+      duration: 60, // Adjust duration as needed
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  const handleBlur = (scale) => {
+    Animated.timing(scale, {
+      toValue: 1,
+      duration: 200, // Adjust duration as needed
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
   };
 
-  const handleBlur = () => {
-    setFocusedField(null);
+  const handleDropdownToggle = (isVisible) => {
+    if (isVisible) {
+      handleFocus(genderScale);
+    } else {
+      handleBlur(genderScale);
+    }
   };
-
+  
   return (
     <>
       <Navbar>
@@ -102,36 +127,28 @@ const PatientInfo = ({navigation}) => {
           <Image source={EyeImage} style={styles.logo} />
           <Text style={styles.heading}>Basic Patient Information</Text>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'regNo' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: regScale }] }]}>
             <Text style={styles.label}>Registration No:</Text>
             <TextInput
               style={styles.input}
               value={regNo}
               onChangeText={setRegNo}
-              onFocus={() => handleFocus('regNo')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(regScale)}
+          onBlur={() => handleBlur(regScale)}
               placeholder="Enter Registration Number"
               selectionColor={'black'}
               placeholderTextColor="#8F8F8F"
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'name' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: nameScale }] }]}>
             <Text style={styles.label}>Name:</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              onFocus={() => handleFocus('name')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(nameScale)}
+          onBlur={() => handleBlur(nameScale)}
               placeholder="Enter Full Name"
               selectionColor={'black'}
               placeholderTextColor="#8F8F8F"
@@ -139,18 +156,14 @@ const PatientInfo = ({navigation}) => {
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'age' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: ageScale }] }]}>
             <Text style={styles.label}>Age:</Text>
             <TextInput
               style={styles.input}
               value={age}
               onChangeText={setAge}
-              onFocus={() => handleFocus('age')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(ageScale)}
+              onBlur={() => handleBlur(ageScale)}
               keyboardType="numeric"
               placeholder="Enter Age"
               selectionColor={'black'}
@@ -158,12 +171,9 @@ const PatientInfo = ({navigation}) => {
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'gender' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View  style={[styles.inputContainer, { transform: [{ scale: genderScale }] }]}>
             <Text style={styles.label}>Gender:</Text>
+
             <SelectList
               setSelected={val => setGender(val)}
               data={genderOptions}
@@ -173,43 +183,35 @@ const PatientInfo = ({navigation}) => {
               dropdownStyles={styles.dropdown} 
               inputStyles={
                 !gender ? styles.optionInput : styles.optionPressedInput
-              } 
-              dropdownItemStyles={styles.item} 
-              dropdownTextStyles={styles.itemText} 
-              placeholder="Choose"
-            />
+                } 
+                dropdownItemStyles={styles.item} 
+                dropdownTextStyles={styles.itemText} 
+                placeholder="Choose"
+                />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'occupation' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: occupationScale }] }]}>
             <Text style={styles.label}>Occupation:</Text>
             <TextInput
               style={styles.input}
               value={occupation}
               onChangeText={setOccupation}
-              onFocus={() => handleFocus('occupation')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(occupationScale)}
+          onBlur={() => handleBlur(occupationScale)}
               placeholder="Enter Occupation"
               selectionColor={'black'}
               placeholderTextColor="#8F8F8F"
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'mobileNumber' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: mobileScale }] }]}>
             <Text style={styles.label}>Mobile Number:</Text>
             <TextInput
               style={styles.input}
               value={mobileNumber}
               onChangeText={setMobileNumber}
-              onFocus={() => handleFocus('mobileNumber')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(mobileScale)}
+          onBlur={() => handleBlur(mobileScale)}
               keyboardType="phone-pad"
               placeholder="Enter Mobile Number"
               selectionColor={'black'}
@@ -217,18 +219,14 @@ const PatientInfo = ({navigation}) => {
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'email' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: emailScale }] }]}>
             <Text style={styles.label}>Email ID:</Text>
             <TextInput
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              onFocus={() => handleFocus('email')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(emailScale)}
+          onBlur={() => handleBlur(emailScale)}
               keyboardType="email-address"
               placeholder="Enter Email Address"
               selectionColor={'black'}
@@ -284,11 +282,7 @@ const PatientInfo = ({navigation}) => {
             </View>
           </View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'diabetes' && styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: nameScale }] }]}>
             <Text style={styles.label}>Diabetes:</Text>
             <SelectList
               setSelected={val => setDiabetes(val)}
@@ -308,19 +302,14 @@ const PatientInfo = ({navigation}) => {
 
           <Text style={styles.heading}>Vision Information</Text>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'otherComplaints' &&
-                styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: complaintsScale }] }]}>
             <Text style={styles.label}>Other Complaints:</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
               value={otherComplaints}
               onChangeText={setOtherComplaints}
-              onFocus={() => handleFocus('otherComplaints')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(complaintsScale)}
+          onBlur={() => handleBlur(complaintsScale)}
               placeholder="Describe any other complaints"
               placeholderTextColor="#8F8F8F"
               multiline

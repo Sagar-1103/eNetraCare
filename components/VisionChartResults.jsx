@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Animated,
   Alert,
   Image,
+  Easing,
   TouchableOpacity,
 } from 'react-native';
 import EyeSection from './EyeSection';
@@ -585,12 +586,27 @@ const VisionChartResults = ({navigation}) => {
     navigation.navigate('Pdf', {filePath: pdf.filePath, tempName: tempName});
   };
 
-  const handleFocus = field => {
-    setFocusedField(field);
-  };
+  const distrightScale = useRef(new Animated.Value(1)).current;
+  const distleftScale = useRef(new Animated.Value(1)).current;
+  const nearrightScale = useRef(new Animated.Value(1)).current;
+  const nearleftScale = useRef(new Animated.Value(1)).current;
 
-  const handleBlur = () => {
-    setFocusedField(null);
+  const handleFocus = (scale) => {
+    Animated.timing(scale, {
+      toValue: 1.05,
+      duration: 60, 
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  const handleBlur = (scale) => {
+    Animated.timing(scale, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
   };
 
   const handleRefer = id => {
@@ -614,38 +630,28 @@ const VisionChartResults = ({navigation}) => {
           colors={['#3EA6D7', '#3EA5D6', '#7DBDD4']}>
           <Text style={styles.sectionHeading}>Vision Chart Results</Text>
           <Text style={styles.subHeading}>Distant Vision:</Text>
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'distantRightEyeResult' &&
-                styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: distrightScale }] }]}>
             <Text style={styles.label}>Right Eye:</Text>
             <TextInput
               style={styles.input}
               value={distantRightEyeResult}
               onChangeText={setDistantRightEyeResult}
-              onFocus={() => handleFocus('distantRightEyeResult')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(distrightScale)}
+              onBlur={() => handleBlur(distrightScale)}
               placeholder="Enter right eye result"
               selectionColor={'black'}
               placeholderTextColor="#999"
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'distantleftEyeResult' &&
-                styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: distleftScale }] }]}>
             <Text style={styles.label}>Left Eye:</Text>
             <TextInput
               style={styles.input}
               value={distantleftEyeResult}
               onChangeText={setDistantLeftEyeResult}
-              onFocus={() => handleFocus('distantleftEyeResult')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(distleftScale)}
+              onBlur={() => handleBlur(distleftScale)}
               placeholder="Enter left eye result"
               selectionColor={'black'}
               placeholderTextColor="#999"
@@ -653,38 +659,28 @@ const VisionChartResults = ({navigation}) => {
           </Animated.View>
 
           <Text style={styles.subHeading}>Near Vision:</Text>
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'nearRightEyeResult' &&
-                styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: nearrightScale }] }]}>
             <Text style={styles.label}>Right Eye:</Text>
             <TextInput
               style={styles.input}
               value={nearRightEyeResult}
               onChangeText={setNearRightEyeResult}
-              onFocus={() => handleFocus('nearRightEyeResult')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(nearrightScale)}
+              onBlur={() => handleBlur(nearrightScale)}
               placeholder="Enter right eye result"
               selectionColor={'black'}
               placeholderTextColor="#999"
             />
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.inputContainer,
-              focusedField === 'nearleftEyeResult' &&
-                styles.focusedInputContainer,
-            ]}>
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: nearleftScale }] }]}>
             <Text style={styles.label}>Left Eye:</Text>
             <TextInput
               style={styles.input}
               value={nearleftEyeResult}
               onChangeText={setNearLeftEyeResult}
-              onFocus={() => handleFocus('nearleftEyeResult')}
-              onBlur={handleBlur}
+              onFocus={() => handleFocus(nearleftScale)}
+              onBlur={() => handleBlur(nearleftScale)}
               placeholder="Enter left eye result"
               selectionColor={'black'}
               placeholderTextColor="#999"

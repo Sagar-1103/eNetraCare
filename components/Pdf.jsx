@@ -129,7 +129,7 @@ const Pdf = ({route, navigation}) => {
         </View>
       </Modal>
       <Navbar>
-        <Text style={styles.navbarTitle}>Patient Form</Text>
+        <Text style={styles.navbarTitle}>Patient Document Management</Text>
       </Navbar>
       <LinearGradient
         colors={['#A0CDDE', '#7DBDD4', '#3EA6D7']}
