@@ -21,6 +21,7 @@ import Navbar from './Navbar';
 import NavbarBackArrow from '../assets/navbarBackArrow.png';
 import ImagePicker from 'react-native-image-crop-picker';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
 
 const VisionChartResults = ({navigation}) => {
   const [distantRightEyeResult, setDistantRightEyeResult] = useState('');
@@ -49,6 +50,7 @@ const VisionChartResults = ({navigation}) => {
     mobileNumber,
     ophthalmologist,
     setOphthalmologist,
+    loading,setLoading
   } = useSession();
 
   const referOptions = [
@@ -58,6 +60,7 @@ const VisionChartResults = ({navigation}) => {
   const [tempReferOption, setTempReferOption] = useState('2');
 
   const handleVisionSubmit = async () => {
+    setLoading(true);
     const pdfContent = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -527,6 +530,7 @@ const VisionChartResults = ({navigation}) => {
       await RNFS.mkdir(folderPath, {NSURLIsExcludedFromBackupKey: true});
       console.log('Directory created successfully:', folderPath);
     } catch (error) {
+      setLoading(false);
       console.error('Error creating directory:', error);
     }
 
@@ -542,15 +546,23 @@ const VisionChartResults = ({navigation}) => {
         directory: `/../Enetracare/${regNo}_${entries}`,
       };
     };
-    if (entries < 1) {
-      Alert.alert('Session Expired');
-      await AsyncStorage.clear();
-      setCategory(null);
-      setEntries(null);
-      navigation.navigate('Home');
-      return;
+    try {
+      if (entries < 1) {
+        setLoading(false);
+        Alert.alert('Session Expired','Login again');
+        await AsyncStorage.clear();
+        setCategory(null);
+        setEntries(null);
+        navigation.navigate('Home');
+        return;
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log("Error Expiring Session");
     }
-    const tempEntries = entries;
+
+    try {
+      const tempEntries = entries;
     await AsyncStorage.setItem('entries', JSON.stringify(tempEntries - 1));
     setEntries(tempEntries - 1);
     let pdf = await RNHTMLtoPDF.convert(printOptions);
@@ -583,7 +595,14 @@ const VisionChartResults = ({navigation}) => {
     }
 
     const tempName = `${regNo}_${entries}`;
+    setLoading(false);
     navigation.navigate('Pdf', {filePath: pdf.filePath, tempName: tempName});
+
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+    
   };
 
   const distrightScale = useRef(new Animated.Value(1)).current;
@@ -725,14 +744,18 @@ const VisionChartResults = ({navigation}) => {
               thumbColor={consent ? '#ffffff' : '#f4f3f4'}
             />
           </View>
-
           <TouchableOpacity
-            style={[styles.button, !consent && {backgroundColor: '#ccc'}]}
+            style={[styles.button, !consent && {backgroundColor: '#ccc'},loading && {backgroundColor: '#ccc'}]}
             disabled={!consent}
             onPress={handleVisionSubmit}>
+          {/* <LottieView style={{width:100,height:100}} source={require('../animation/loader.json')} autoPlay loop /> */}
+           {!loading ? (
             <Text style={[styles.buttonText, !consent && {color: '#ffffff'}]}>
               Submit
             </Text>
+            ):(
+              <LottieView style={styles.loaderStyle} source={require('../animation/loader.json')} autoPlay loop />
+            )}
           </TouchableOpacity>
         </LinearGradient>
       </ScrollView>
@@ -877,6 +900,12 @@ const styles = StyleSheet.create({
     color: '#134687',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loaderStyle: {
+    fontWeight: 'bold',
+    height:100,
+    width:100,
+    marginVertical:-40,
   },
   image: {
     width: '100%',

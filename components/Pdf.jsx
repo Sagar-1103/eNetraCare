@@ -16,6 +16,7 @@ import {useSession} from '../context/SessionProvider';
 import Logo from '../assets/enetracareLogo.png';
 import LinearGradient from 'react-native-linear-gradient';
 import Navbar from './Navbar';
+import LottieView from 'lottie-react-native';
 
 const Pdf = ({route, navigation}) => {
   const {filePath, tempName} = route.params;
@@ -38,9 +39,16 @@ const Pdf = ({route, navigation}) => {
     setGender,
     setOccupation,
     setMobileNumber,
+    loading,
+    setLoading,
   } = useSession();
   const [clickedButton, setClickedButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState({
+    title: '',
+    description: '',
+    showBtn:false
+  });
 
   const functionIsInvoked = async (id, func) => {
     setClickedButton(id);
@@ -49,48 +57,79 @@ const Pdf = ({route, navigation}) => {
   };
 
   const printPdf = async () => {
-    await RNPrint.print({filePath: filePath});
+    try {
+      await RNPrint.print({filePath: filePath});
+    } catch (error) {
+      console.log('Error while printing the PDF:', error);
+      setModalMessage({
+        title: 'Printing Failed',
+        description: 'An error occurred while printing the PDF',
+      });
+      setModalVisible(true);
+    }
   };
 
   const downloadPdf = async () => {
     try {
-      const id = uuid.v4().slice(0, 2);
-      const destinationPath = `${RNFS.DownloadDirectoryPath}/${tempName}-${id}.pdf`;
-      await RNFS.copyFile(filePath, destinationPath);
-      setModalVisible(true);
+      setLoading(true);
+      setModalMessage({
+        title: 'Download Successful',
+        description: 'PDF downloaded to downloads folder.',
+      });
+      setTimeout(async () => {
+        const id = uuid.v4().slice(0, 2);
+        const destinationPath = `${RNFS.DownloadDirectoryPath}/${tempName}-${id}.pdf`;
+        await RNFS.copyFile(filePath, destinationPath);
+        setLoading(false);
+        setModalVisible(true);
+      }, 2000);
     } catch (error) {
-      console.error('Error downloading PDF:', error);
-      Alert.alert(
-        'Download Failed',
-        'An error occurred while downloading the PDF',
-      );
+      setLoading(false);
+      console.log('Error downloading PDF:', error);
+      setModalMessage({
+        title: 'Download Failed',
+        description: 'An error occurred while downloading the PDF',
+      });
+      setModalVisible(true);
     }
   };
 
   const handleEntry = async () => {
-    if (entries < 1) {
-      await AsyncStorage.clear();
-      setCategory(null);
-      setEntries(null);
-      navigation.navigate('Home');
-      return;
+    try {
+      if (entries < 1) {
+        setModalMessage({
+          title: 'Entry Limit Exceeded',
+          description: 'Login once again to make entries',
+          showBtn:true
+        });
+        setModalVisible(true);
+        // await AsyncStorage.clear();
+        // setCategory(null);
+        // setEntries(null);
+        // navigation.navigate('Home');
+        return;
+      }
+      console.log(entries);
+      setRegNo('');
+      setName('');
+      setAge('');
+      setGender('');
+      setOccupation('');
+      setMobileNumber('');
+      setEmail('');
+      setBloodGroup('');
+      setDiabetes('');
+      setOtherComplaints('');
+      setCataractSurgery('4');
+      setReducedVision(false);
+      setReducedVisionEye('');
+      setSurgeryEye('');
+      setOphthalmologist(false);
+      navigation.navigate('PatientInfo');
+    } catch (error) {
+      console.log('Error downloading PDF:', error);
+      Alert.alert('Internal Error');
     }
-    navigation.navigate('PatientInfo');
-    setRegNo('');
-    setName('');
-    setAge('');
-    setGender('');
-    setOccupation('');
-    setMobileNumber('');
-    setEmail('');
-    setBloodGroup('');
-    setDiabetes('');
-    setOtherComplaints('');
-    setCataractSurgery('4');
-    setReducedVision(false);
-    setReducedVisionEye('');
-    setSurgeryEye('');
-    setOphthalmologist(false);
   };
 
   const buttons = [
@@ -107,6 +146,17 @@ const Pdf = ({route, navigation}) => {
     },
   ];
 
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+  const handleLimitExceeded = async () => {
+    setModalVisible(false);
+    await AsyncStorage.clear();
+    setCategory(null);
+    setEntries(null);
+    navigation.navigate('Home');
+  };
+
   return (
     <>
       <Modal
@@ -116,15 +166,23 @@ const Pdf = ({route, navigation}) => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Download Successful</Text>
+            <Text style={styles.modalTitle}>{modalMessage.title}</Text>
             <Text style={styles.modalDescription}>
-              PDF downloaded to downloads folder.
+              {modalMessage.description}
             </Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+            <View
+              style={styles.buttonGroup}>
+              {modalMessage.showBtn && <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleLimitExceeded}>
+                <Text style={styles.closeButtonText}>Login</Text>
+              </TouchableOpacity>}
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleCloseModal}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -140,18 +198,31 @@ const Pdf = ({route, navigation}) => {
         {buttons.map(button => (
           <TouchableOpacity
             key={button.id}
-            style={
-              clickedButton === button.id ? styles.buttonPressed : styles.button
-            }
+            style={[
+              clickedButton === button.id
+                ? styles.buttonPressed
+                : styles.button,
+              loading && button.id === 1 && {backgroundColor: '#ccc'},
+            ]}
             onPress={button.onPress}>
-            <Text
-              style={
-                clickedButton === button.id
-                  ? styles.buttonPressedText
-                  : styles.buttonText
-              }>
-              {button.title}
-            </Text>
+            {!(loading && button.id === 1) && (
+              <Text
+                style={
+                  clickedButton === button.id
+                    ? styles.buttonPressedText
+                    : styles.buttonText
+                }>
+                {button.title}
+              </Text>
+            )}
+            {loading && button.id === 1 && (
+              <LottieView
+                style={styles.loaderStyle}
+                source={require('../animation/loader.json')}
+                autoPlay
+                loop
+              />
+            )}
           </TouchableOpacity>
         ))}
       </LinearGradient>
@@ -174,6 +245,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#00796b',
     marginBottom: 30,
+  },
+  loaderStyle: {
+    fontWeight: 'bold',
+    height: 100,
+    width: 100,
+    marginVertical: -40,
   },
   button: {
     backgroundColor: '#ffffff',
@@ -255,12 +332,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     width: 250,
   },
+  buttonGroup : {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+  },
   closeButton: {
     marginTop: 10,
     backgroundColor: '#134687',
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    marginHorizontal:20
   },
   closeButtonText: {
     color: '#FFFFFF',

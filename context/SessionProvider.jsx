@@ -6,7 +6,7 @@ const SessionContext = createContext();
 
 const SessionProvider = props => {
   const [category, setCategory] = useState(null);
-  const [entries, setEntries] = useState(null);
+  const [entries, setEntries] = useState(0);
   const [regNo, setRegNo] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -25,9 +25,11 @@ const SessionProvider = props => {
   const [cataractSurgery, setCataractSurgery] = useState('4');
   const [surgeryEye, setSurgeryEye] = useState('');
   const [ophthalmologist, setOphthalmologist] = useState('No');
+  const [loading, setLoading] = useState(false);
   return (
     <SessionContext.Provider
       value={{
+        loading, setLoading,
         ophthalmologist,
         setOphthalmologist,
         surgeryEye,

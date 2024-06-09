@@ -30,6 +30,11 @@ const AppNavigation = () => {
     if (tempEntries !== null) {
       setEntries(JSON.parse(tempEntries));
     }
+    if (tempEntries < 1) {
+       await AsyncStorage.clear();
+        setCategory(null);
+        setEntries(null);
+    }
     setLoading(false);
   };
   if (loading) {
