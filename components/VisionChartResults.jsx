@@ -340,95 +340,17 @@ const VisionChartResults = ({navigation}) => {
           
           
           <div class="page page-pad">
-            <h3>General Information on Cataract</h3>
+            <h3>Disclaimer</h3>
             <div class="form-section">
-              <p> As you age, the lenses in your eyes become less flexible, less clear, and
-              thicker. Aging and some medical conditions can cause proteins and fibres
-              within the lenses to break down and clump together. This is what causes the
-              clouding in the lenses.</p>
+              <p>The eNetraCare Cataract Screening device is an ophthalmologist assist software and is not a replacement for an ophthalmologist's diagnosis. The results provided are indicative of a high probability of cataract or cataract suspicion. This report does not screen for any medical or vision conditions apart from Cataract. The images in this report are only thumbnails and must not be used for diagnostic purposes. Referral to an ophthalmologist is suggested for further evaluation.</p>
 
-            <p> As the cataract grows, the clouding becomes worse. A cataract scatters and
-            blocks the light as it passes through the lens. This prevents a sharply defined
-            image from reaching your retina. As a result, your vision becomes blurred.
-            Cataracts usually happen in both eyes, but not always at the same rate. The
-            cataract in one eye may be worse than the other. This causes a difference in
-            vision between eyes.</p>
-            <p> The most common cause of cataract is degenerative changes due to the
-            ageing process. With age, proteins in the natural lens degenerate, resulting in
-            a clouded lens called a cataract. There might be other causes such as:
-           </p>
-
-              <ul>
-              <li>Health conditions like diabetes, kidney disease, glaucoma, smoking, eye
-              injuries, infection, and inflammation inside the eye.
-             </li>
-              <li>Prolonged use of certain medications can also lead to cataract formation.
-             </li>
-              <li>Cataract may also occur in children due to genetic or metabolic defect or
-              due to infection and trauma.
-             </li>
-              </ul>
-
-              <p>If you have cataract, you may experience some or all of the following
-              symptoms.</p>
-
-              <ul>
-              <li>Cloudy vision.</li>
-              <li>Colours of objects may appear faded.</li>
-              <li>Poor eyesight at night.</li>
-              <li>Difficulty in driving at night, especially because of the glare of lights.</li>
-              <li>Difficulty in reading in dim light.</li>
-              <li>Coloured haloes.</li>
-              <li>You may see multiple images or double images.</li>
-              </ul>
-
-              <p>To deal with symptoms of cataracts until you decide to have surgery, try to:</p>
-              <ul>
-              <li>Make sure your prescription for your eyeglasses or contact lenses is up to date.</li>
-              <li>Improve the lighting in your home with more or brighter lamps.</li>
-              <li>Wear sunglasses or a broad-brimmed hat to reduce glare during the day.</li>
-              <li>Limit driving at night.</li>
-              </ul>
-              <p>Self-care measures may help for a while, but your vision may get worse as
-              the cataract grows. When vision loss starts to affect your everyday activities,
-              consider cataract surgery.</p>
-
+            <p>Cataract in one or both eyes is a cause of reversible blindness. Make an appointment with an ophthalmologist if you notice any changes in your vision.</p>
+            
+            <p style="text-align: center;">"Vision for All"</p>
             </div>
           </div>
+              
 
-
-
-          <div class="page page-pad">
-            <h3>Preparing for your appointment</h3>
-            <div class="form-section">
-              <p> Make an appointment with your eye care professional if you notice changes
-              in your vision. If they determine that you have cataracts, then you may be
-              referred to an eye specialist who can perform cataract surgery.</p>
-    
-              <p> If you need cataract surgery in both eyes, your doctor will schedule surgery to
-              remove the cataract Cataract surgery involves removing the clouded lens and
-              replacing it with a clear artificial lens.</p>
-
-              <p>The artificial lens, called an intraocular lens, is put in the same place as your
- natural lens. It remains a permanent part of your eye.</p>
-
-              <p>Prevention</p>
-
-              <p>No studies have proved how to prevent or slow the growth of cataracts. But
-              health care professionals think several strategies may be helpful, including:</p>
-
-              <ul>
-              <li> Regular eye exams.</li>
-              <li> Do not smoke.</li>
-              <li> Manage other health problems.</li>
-              <li> Choose a healthy diet that includes plenty of fruits and vegetables.</li>
-              </ul>
-
-            </div>
-          </div>
-          
-    
-          
         </div>
       </body>
     </html>
@@ -588,8 +510,14 @@ const VisionChartResults = ({navigation}) => {
 
     const deletionPath = RNFS.ExternalDirectoryPath + '/Pictures';
     try {
-      await RNFS.unlink(deletionPath);
-      console.log('Folder Deleted');
+      const deletionPathExists = await RNFS.exists(deletionPath);
+      if (deletionPathExists) {
+        await RNFS.unlink(deletionPath);
+        console.log('Folder Deleted');
+      }
+      else {
+        console.log("Path doesnt exist");
+      }
     } catch (error) {
       console.log('Deletion Error : ', error);
     }
