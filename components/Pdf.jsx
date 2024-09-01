@@ -41,6 +41,7 @@ const Pdf = ({route, navigation}) => {
     setMobileNumber,
     loading,
     setLoading,
+    setBloodPressure
   } = useSession();
   const [clickedButton, setClickedButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -125,6 +126,7 @@ const Pdf = ({route, navigation}) => {
       setReducedVisionEye('');
       setSurgeryEye('');
       setOphthalmologist(false);
+      setBloodPressure('');
       navigation.navigate('PatientInfo');
     } catch (error) {
       console.log('Error downloading PDF:', error);

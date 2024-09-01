@@ -25,6 +25,7 @@ const SessionProvider = props => {
   const [cataractSurgery, setCataractSurgery] = useState('4');
   const [surgeryEye, setSurgeryEye] = useState('');
   const [ophthalmologist, setOphthalmologist] = useState('No');
+  const [bloodPressure, setBloodPressure] = useState('');
   const [loading, setLoading] = useState(false);
   return (
     <SessionContext.Provider
@@ -70,6 +71,8 @@ const SessionProvider = props => {
         setOccupation,
         mobileNumber,
         setMobileNumber,
+        bloodPressure,
+        setBloodPressure
       }}>
       {props.children}
     </SessionContext.Provider>

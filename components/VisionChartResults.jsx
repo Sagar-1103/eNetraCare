@@ -38,7 +38,7 @@ const VisionChartResults = ({navigation}) => {
     diabetes,
     bloodGroup,
     email,
-    category,
+    bloodPressure,
     setCategory,
     entries,
     setEntries,
@@ -235,6 +235,10 @@ const VisionChartResults = ({navigation}) => {
             <div class="form-group">
               <label>Diabetes:</label>
               <input type="text" value="${diabetes}" readonly />
+            </div>
+            <div class="form-group">
+              <label>Blood Pressure:</label>
+              <input type="text" value="${bloodPressure + ' mmHg'}" readonly />
             </div>
           </div>
           <h3>Patient Eye History</h3>

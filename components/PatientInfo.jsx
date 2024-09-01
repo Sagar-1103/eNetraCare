@@ -39,6 +39,8 @@ const PatientInfo = ({navigation}) => {
     setOccupation,
     mobileNumber,
     setMobileNumber,
+    bloodPressure,
+    setBloodPressure
   } = useSession();
 
   const [tempBloodGroup, setTempBloodGroup] = useState('');
@@ -50,6 +52,7 @@ const PatientInfo = ({navigation}) => {
   const occupationScale = useRef(new Animated.Value(1)).current;
   const mobileScale = useRef(new Animated.Value(1)).current;
   const emailScale = useRef(new Animated.Value(1)).current;
+  const bloodPressureScale = useRef(new Animated.Value(1)).current;
   const diabetesScale = useRef(new Animated.Value(1)).current;
   const complaintsScale = useRef(new Animated.Value(1)).current;
   const genderOptions = [
@@ -297,6 +300,22 @@ const PatientInfo = ({navigation}) => {
               dropdownItemStyles={styles.item} 
               dropdownTextStyles={styles.itemText} 
               placeholder="Choose"
+            />
+          </Animated.View>
+
+          <Animated.View style={[styles.inputContainer, { transform: [{ scale: bloodPressureScale }] }]}>
+            <Text style={styles.label}>Blood Pressure:</Text>
+            <TextInput
+              style={styles.input}
+              value={bloodPressure}
+              onChangeText={setBloodPressure}
+              onFocus={() => handleFocus(bloodPressureScale)}
+          onBlur={() => handleBlur(bloodPressureScale)}
+              keyboardType="number-pad"
+              placeholder="Enter Blood Pressure"
+              selectionColor={'black'}
+              placeholderTextColor="#8F8F8F"
+              autoCapitalize="none"
             />
           </Animated.View>
 
